@@ -20,12 +20,12 @@ jobs:
 
       - name: Install deps
         run: |
-          cd ~/aws-deploy-testing/vita-project
+          cd vita-project
           npm install
 
       - name: Build
         run: |
-          cd ~/aws-deploy-testing/vita-project
+          cd vita-project
           npm run build
 
       - name: Configure AWS

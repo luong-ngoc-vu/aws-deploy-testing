@@ -22,14 +22,15 @@ jobs:
 
             git pull
 
-            export DB_HOST=${{ secrets.DB_HOST }}
-            export DB_PORT=${{ secrets.DB_PORT }}
-            export DB_NAME=${{ secrets.DB_NAME }}
-            export DB_USER=${{ secrets.DB_USER }}
-            export DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+            cat > .env << EOF
+            DB_HOST=${{ secrets.DB_HOST }}
+            DB_PORT=${{ secrets.DB_PORT }}
+            DB_NAME=${{ secrets.DB_NAME }}
+            DB_USER=${{ secrets.DB_USER }}
+            DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+            EOF
 
             source venv/bin/activate
-
             pip install -r requirements.txt
 
             sudo systemctl restart backend

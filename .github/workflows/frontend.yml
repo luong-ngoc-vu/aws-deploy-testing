@@ -19,10 +19,14 @@ jobs:
           node-version: 20
 
       - name: Install deps
-        run: npm install
+        run: |
+          cd ~/aws-deploy-testing/vita-project
+          npm install
 
       - name: Build
-        run: npm run build
+        run: |
+          cd ~/aws-deploy-testing/vita-project
+          npm run build
 
       - name: Configure AWS
         uses: aws-actions/configure-aws-credentials@v4

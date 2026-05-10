@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useQuery, keepPreviousData } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import { useState } from "react";
 
 interface IUser {
   id: number;

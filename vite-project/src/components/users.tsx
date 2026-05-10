@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface IUser {
   id: number;
@@ -6,126 +6,247 @@ interface IUser {
   email: string;
 }
 
+interface IApiResponse {
+  users: IUser[];
+  total: number;
+  pages: number;
+  current_page: number;
+}
+
 export default function Users() {
+  // States
   const [users, setUsers] = useState<IUser[]>([]);
   const [loading, setLoading] = useState(false);
   const [selectedUser, setSelectedUser] = useState<IUser | null>(null);
 
-  const getUsers = async () => {
+  // Pagination States
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [totalPages, setTotalPages] = useState(1);
+
+  // Tự động fetch khi thay đổi page hoặc pageSize
+  useEffect(() => {
+    fetchUsers();
+  }, [page, pageSize]);
+
+  const fetchUsers = async () => {
     setLoading(true);
     try {
-      const res = await fetch("https://d1qcsdbpz6o0bc.cloudfront.net/users");
-      const data = await res.json();
-      setUsers(data);
+      // Endpoint giả định, bạn thay bằng URL thật của Flask
+      const res = await fetch(
+        `https://your-api-domain.com/users?page=${page}&page_size=${pageSize}`,
+      );
+      const data: IApiResponse = await res.json();
+      setUsers(data.users);
+      setTotalPages(data.pages);
     } catch (err) {
-      console.error("Error:", err);
+      console.error("Lỗi kết nối API:", err);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const closeModal = () => setSelectedUser(null);
 
   return (
-    <div style={{ padding: "40px", fontFamily: "sans-serif" }}>
+    <div
+      style={{
+        padding: "40px",
+        maxWidth: "1000px",
+        margin: "0 auto",
+        fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+      }}
+    >
       <style>{`
-        /* Button Style Main */
+        /* --- Button & Controls --- */
+        .controls-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 20px;
+        }
+
         .btn-fancy {
           background: linear-gradient(45deg, #4facfe 0%, #00f2fe 100%);
-          color: white; border: none; padding: 12px 25px; border-radius: 30px;
+          color: white; border: none; padding: 12px 28px; border-radius: 30px;
           font-weight: bold; cursor: pointer; transition: all 0.3s ease;
-          box-shadow: 0 4px 15px rgba(79, 172, 254, 0.4); margin-bottom: 25px;
+          box-shadow: 0 4px 15px rgba(79, 172, 254, 0.4);
         }
-        .btn-fancy:hover { transform: scale(1.05); filter: brightness(1.1); }
+        .btn-fancy:hover { transform: translateY(-2px); filter: brightness(1.1); }
+        .btn-fancy:disabled { background: #ccc; cursor: not-allowed; box-shadow: none; }
 
-        /* Table Style */
+        .select-size {
+          padding: 8px 12px; border-radius: 8px; border: 1px solid #ddd;
+          outline: none; cursor: pointer; font-weight: 500;
+        }
+
+        /* --- Table Styling --- */
         .table-wrapper {
-          max-height: 400px; overflow-y: auto; border-radius: 12px;
-          border: 1px solid #ddd; box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+          max-height: 480px; overflow-y: auto; border-radius: 12px;
+          border: 1px solid #eee; box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+          background: white;
         }
-        table { width: 100%; border-collapse: collapse; text-align: left; cursor: pointer; }
-        th { position: sticky; top: 0; background: #333; color: white; padding: 15px; z-index: 10; }
-        td { padding: 12px 15px; border-bottom: 1px solid #eee; color: #444; }
-        tbody tr:nth-child(even) { background-color: #f8f9fa; }
-        tbody tr:hover { background-color: #e9ecef; }
 
-        /* Modal Layout */
+        table { width: 100%; border-collapse: collapse; text-align: left; cursor: pointer; }
+        
+        th { 
+          position: sticky; top: 0; background: #2d3436; color: white; 
+          padding: 16px; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px; z-index: 5;
+        }
+
+        td { padding: 14px 16px; border-bottom: 1px solid #f1f1f1; color: #444; font-size: 15px; }
+        
+        tbody tr:nth-child(even) { background-color: #f9fbfd; }
+        tbody tr:hover { background-color: #edf2f7; transition: 0.2s; }
+
+        /* --- Pagination Bar --- */
+        .pagination-bar {
+          display: flex; justify-content: space-between; align-items: center;
+          margin-top: 20px; padding: 15px; background: #fff; border-radius: 12px;
+          border: 1px solid #eee;
+        }
+
+        .btn-page {
+          padding: 8px 16px; border: 1px solid #dee2e6; background: white;
+          border-radius: 6px; cursor: pointer; font-weight: 500; transition: 0.2s;
+        }
+        .btn-page:hover:not(:disabled) { background: #f8f9fa; border-color: #adb5bd; }
+        .btn-page:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        /* --- Modal Styling --- */
         .modal-overlay {
           position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-          background: rgba(0, 0, 0, 0.5); display: flex;
-          justify-content: center; align-items: center; z-index: 100;
-        }
-        .modal-content {
-          background: white; padding: 30px; border-radius: 16px;
-          width: 450px; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-          animation: slideUp 0.3s ease;
-        }
-        .close-x {
-          position: absolute; top: 15px; right: 20px; font-size: 24px;
-          cursor: pointer; color: #999; border: none; background: none;
+          background: rgba(0, 0, 0, 0.6); display: flex;
+          justify-content: center; align-items: center; z-index: 1000;
+          backdrop-filter: blur(4px);
         }
 
-        /* Form Details */
-        .form-group { margin-bottom: 20px; text-align: left; }
+        .modal-content {
+          background: white; padding: 30px; border-radius: 20px;
+          width: 100%; max-width: 450px; position: relative;
+          box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+          animation: slideUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .close-x {
+          position: absolute; top: 20px; right: 20px; font-size: 28px;
+          cursor: pointer; color: #aaa; border: none; background: none; line-height: 1;
+        }
+
+        .form-group { margin-bottom: 18px; }
         .form-group label { 
-          display: block; 
-          font-weight: bold; /* Bold label */
-          color: #333; 
-          margin-bottom: 8px; 
-          font-size: 14px;
+          display: block; font-weight: bold; color: #2d3436; 
+          margin-bottom: 8px; font-size: 13px; text-transform: uppercase;
         }
         .form-group input { 
-          width: 100%; padding: 12px; border: 1px solid #e0e0e0; 
-          border-radius: 8px; background: #fdfdfd; box-sizing: border-box;
-          outline: none; color: #555;
+          width: 100%; padding: 12px; border: 2px solid #f0f0f0; 
+          border-radius: 10px; background: #fcfcfc; box-sizing: border-box;
+          font-size: 15px; color: #555; outline: none;
         }
 
-        /* Modal Footer */
-        .modal-footer {
-          display: flex;
-          justify-content: flex-end; /* Căn phải button */
-          margin-top: 25px;
-        }
+        .modal-footer { display: flex; justify-content: flex-end; margin-top: 25px; }
+        
         .btn-cancel {
-          padding: 10px 25px; border-radius: 8px;
-          border: none; 
-          background: #007bff; /* Màu xanh */
-          color: white;
-          font-weight: 600;
-          cursor: pointer; 
-          transition: 0.2s;
+          padding: 12px 30px; border-radius: 10px; border: none; 
+          background: #0984e3; color: white; font-weight: bold;
+          cursor: pointer; transition: 0.3s;
         }
-        .btn-cancel:hover { background: #0056b3; box-shadow: 0 4px 10px rgba(0,123,255,0.3); }
+        .btn-cancel:hover { background: #074b83; transform: translateY(-1px); }
 
-        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
       `}</style>
 
-      <button className="btn-fancy" onClick={getUsers} disabled={loading}>
-        {loading ? "⌛ Loading..." : "🚀 Get User Data"}
-      </button>
+      <div className="controls-header">
+        <button className="btn-fancy" onClick={fetchUsers} disabled={loading}>
+          {loading ? "⌛ FETCHING..." : "🚀 REFRESH USERS"}
+        </button>
 
-      {users.length > 0 && (
-        <div className="table-wrapper">
-          <table>
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>User Name</th>
-                <th>Email</th>
-              </tr>
-            </thead>
-            <tbody>
-              {users.map((u) => (
+        <div>
+          <span
+            style={{
+              marginRight: "10px",
+              fontSize: "14px",
+              fontWeight: "bold",
+              color: "#666",
+            }}
+          >
+            ROWS:
+          </span>
+          <select
+            className="select-size"
+            value={pageSize}
+            onChange={(e) => {
+              setPageSize(Number(e.target.value));
+              setPage(1);
+            }}
+          >
+            <option value={10}>10</option>
+            <option value={100}>100</option>
+            <option value={1000}>1000</option>
+          </select>
+        </div>
+      </div>
+
+      <div className="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Full Name</th>
+              <th>Email Address</th>
+            </tr>
+          </thead>
+          <tbody>
+            {users.length > 0 ? (
+              users.map((u) => (
                 <tr key={u.id} onClick={() => setSelectedUser(u)}>
-                  <td>{u.id}</td>
+                  <td style={{ fontWeight: "bold" }}>#{u.id}</td>
                   <td>{u.name}</td>
                   <td>{u.email}</td>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+              ))
+            ) : (
+              <tr>
+                <td
+                  colSpan={3}
+                  style={{
+                    textAlign: "center",
+                    padding: "40px",
+                    color: "#999",
+                  }}
+                >
+                  {loading ? "Loading data..." : "No users found."}
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
 
+      {/* Pagination Controls */}
+      <div className="pagination-bar">
+        <div style={{ fontSize: "14px", color: "#636e72" }}>
+          Trang <b>{page}</b> / <b>{totalPages}</b>
+        </div>
+        <div style={{ display: "flex", gap: "8px" }}>
+          <button
+            className="btn-page"
+            disabled={page <= 1 || loading}
+            onClick={() => setPage((p) => p - 1)}
+          >
+            Previous
+          </button>
+          <button
+            className="btn-page"
+            disabled={page >= totalPages || loading}
+            onClick={() => setPage((p) => p + 1)}
+          >
+            Next
+          </button>
+        </div>
+      </div>
+
+      {/* Details Modal */}
       {selectedUser && (
         <div className="modal-overlay" onClick={closeModal}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
@@ -134,23 +255,23 @@ export default function Users() {
             </button>
 
             <h2
-              style={{ textAlign: "left", marginBottom: "25px", color: "#222" }}
+              style={{ marginTop: 0, marginBottom: "25px", color: "#2d3436" }}
             >
-              Information
+              User Details
             </h2>
 
             <div className="form-group">
-              <label>ID</label>
+              <label>User ID</label>
               <input type="text" value={selectedUser.id} readOnly />
             </div>
 
             <div className="form-group">
-              <label>NAME</label>
+              <label>Full Name</label>
               <input type="text" value={selectedUser.name} readOnly />
             </div>
 
             <div className="form-group">
-              <label>EMAIL</label>
+              <label>Email Address</label>
               <input type="text" value={selectedUser.email} readOnly />
             </div>
 

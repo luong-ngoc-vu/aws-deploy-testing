@@ -1,6 +1,6 @@
 import os
 from dotenv import load_dotenv
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 
@@ -43,9 +43,21 @@ def home():
 
 @app.route("/users")
 def get_users():
-    users = User.query.all()
+    page = request.args.get("page", 1, type=int)
+    page_size = request.args.get("page_size", 10, type=int)
 
-    return jsonify([{"id": u.id, "name": u.name, "email": u.email} for u in users])
+    pagination = User.query.paginate(page=page, per_page=page_size, error_out=False)
+
+    return jsonify(
+        {
+            "users": [
+                {"id": u.id, "name": u.name, "email": u.email} for u in pagination.items
+            ],
+            "total": pagination.total,
+            "pages": pagination.pages,
+            "current_page": pagination.page,
+        }
+    )
 
 
 if __name__ == "__main__":

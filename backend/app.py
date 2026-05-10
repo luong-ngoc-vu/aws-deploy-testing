@@ -31,6 +31,11 @@ class User(db.Model):
     )
 
 
+@app.route("/")
+def home():
+    return {"message": "hello aws 123"}
+
+
 @app.route("/users")
 def get_users():
     users = User.query.all()
@@ -39,4 +44,4 @@ def get_users():
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+    app.run()

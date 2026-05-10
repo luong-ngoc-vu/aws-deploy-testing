@@ -30,7 +30,7 @@ export default function Users() {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
 
-  const { data, isLoading, isError, isPlaceholderData } = useQuery({
+  const { data, isLoading, isError, isPlaceholderData, refetch } = useQuery({
     queryKey: ["users", page, pageSize],
     queryFn: () => fetchUsers(page, pageSize),
     placeholderData: keepPreviousData,
@@ -49,7 +49,13 @@ export default function Users() {
       }}
     >
       <style>{`
-        .controls-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .controls-header {
+            display: flex;
+            justify-content: flex-start; 
+            align-items: center;         
+            gap: 20px;                   
+            margin-bottom: 25px;
+        }
         
         .btn-fancy {
           background: linear-gradient(45deg, #4facfe 0%, #00f2fe 100%);
@@ -101,20 +107,20 @@ export default function Users() {
       `}</style>
 
       <div className="controls-header">
-        <h2 style={{ margin: 0 }}>User Management</h2>
+        <button
+          className="btn-fancy"
+          onClick={() => refetch()}
+          disabled={isLoading}
+        >
+          {isLoading ? "⌛ FETCHING..." : "🚀 REFRESH USERS"}
+        </button>
 
-        <div>
-          <span
-            style={{
-              marginRight: "10px",
-              fontSize: "14px",
-              fontWeight: "bold",
-            }}
-          >
-            Rows per page:
+        <div className="size-selector-group">
+          <span style={{ fontSize: "14px", fontWeight: "bold", color: "#666" }}>
+            ROWS PER PAGE:
           </span>
           <select
-            style={{ padding: "8px", borderRadius: "8px" }}
+            className="select-size"
             value={pageSize}
             onChange={(e) => {
               setPageSize(Number(e.target.value));

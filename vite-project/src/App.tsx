@@ -4,9 +4,11 @@ import viteLogo from "./assets/vite.svg";
 import heroImg from "./assets/hero.png";
 import "./App.css";
 import Users from "./components/users";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 function App() {
   const [count, setCount] = useState(0);
+  const queryClient = new QueryClient();
 
   return (
     <>
@@ -33,7 +35,9 @@ function App() {
 
       <div className="ticks"></div>
 
-      <Users />
+      <QueryClientProvider client={queryClient}>
+        <Users />
+      </QueryClientProvider>
 
       <section id="next-steps">
         <div id="docs">

@@ -1,5 +1,6 @@
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { useState } from "react";
+import "./styles.scss"; // Import file scss
 
 interface IUser {
   id: number;
@@ -40,72 +41,7 @@ export default function Users() {
   const closeModal = () => setSelectedUser(null);
 
   return (
-    <div
-      style={{
-        padding: "40px",
-        maxWidth: "1000px",
-        margin: "0 auto",
-        fontFamily: "sans-serif",
-      }}
-    >
-      <style>{`
-        .controls-header {
-            display: flex;
-            justify-content: flex-start; 
-            align-items: center;         
-            gap: 20px;                   
-            margin-bottom: 25px;
-        }
-        
-        .btn-fancy {
-          background: linear-gradient(45deg, #4facfe 0%, #00f2fe 100%);
-          color: white; border: none; padding: 12px 28px; border-radius: 30px;
-          font-weight: bold; cursor: pointer; transition: 0.3s;
-          box-shadow: 0 4px 15px rgba(79, 172, 254, 0.4);
-        }
-        .btn-fancy:hover { transform: translateY(-2px); filter: brightness(1.1); }
-
-        .table-wrapper {
-          max-height: 480px; overflow-y: auto; border-radius: 12px;
-          border: 1px solid #eee; box-shadow: 0 10px 25px rgba(0,0,0,0.05); background: white;
-        }
-
-        table { width: 100%; border-collapse: collapse; text-align: left; cursor: pointer; }
-        th { position: sticky; top: 0; background: #2d3436; color: white; padding: 16px; z-index: 5; }
-        td { padding: 14px 16px; border-bottom: 1px solid #f1f1f1; color: #444; }
-        tbody tr:nth-child(even) { background-color: #f9fbfd; }
-        tbody tr:hover { background-color: #edf2f7; }
-
-        .pagination-bar {
-          display: flex; justify-content: space-between; align-items: center;
-          margin-top: 20px; padding: 15px; background: #fff; border-radius: 12px; border: 1px solid #eee;
-        }
-
-        .btn-page {
-          padding: 8px 16px; border: 1px solid #dee2e6; background: white;
-          border-radius: 6px; cursor: pointer; font-weight: 500;
-        }
-        .btn-page:disabled { opacity: 0.5; cursor: not-allowed; }
-
-        /* Modal Styles */
-        .modal-overlay {
-          position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-          background: rgba(0, 0, 0, 0.6); display: flex; justify-content: center; align-items: center; z-index: 1000;
-          backdrop-filter: blur(4px);
-        }
-        .modal-content {
-          background: white; padding: 30px; border-radius: 20px; width: 450px; position: relative;
-          box-shadow: 0 20px 40px rgba(0,0,0,0.3); animation: slideUp 0.3s ease;
-        }
-        .form-group { margin-bottom: 18px; text-align: left; }
-        .form-group label { display: block; font-weight: bold; color: #2d3436; margin-bottom: 8px; font-size: 13px; }
-        .form-group input { width: 100%; padding: 12px; border: 2px solid #f0f0f0; border-radius: 10px; outline: none; }
-        .modal-footer { display: flex; justify-content: flex-end; margin-top: 25px; }
-        .btn-cancel { padding: 12px 30px; border-radius: 10px; border: none; background: #0984e3; color: white; font-weight: bold; cursor: pointer; }
-        
-        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-      `}</style>
-
+    <div className="users-page-container">
       <div className="controls-header">
         <button
           className="btn-fancy"
@@ -116,21 +52,21 @@ export default function Users() {
         </button>
 
         <div className="size-selector-group">
-          <span style={{ fontSize: "14px", fontWeight: "bold", color: "#666" }}>
-            ROWS PER PAGE:
-          </span>
-          <select
-            className="select-size"
-            value={pageSize}
-            onChange={(e) => {
-              setPageSize(Number(e.target.value));
-              setPage(1);
-            }}
-          >
-            <option value={10}>10</option>
-            <option value={100}>100</option>
-            <option value={1000}>1000</option>
-          </select>
+          <span>ROWS PER PAGE:</span>
+          <div className="select-wrapper">
+            <select
+              className="select-size"
+              value={pageSize}
+              onChange={(e) => {
+                setPageSize(Number(e.target.value));
+                setPage(1);
+              }}
+            >
+              <option value={10}>10</option>
+              <option value={100}>100</option>
+              <option value={1000}>1000</option>
+            </select>
+          </div>
         </div>
       </div>
 

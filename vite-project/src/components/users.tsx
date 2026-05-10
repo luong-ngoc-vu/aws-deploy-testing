@@ -14,7 +14,7 @@ export default function Users() {
     setLoading(true);
 
     try {
-      const res = await fetch("http://23.22.116.200:5000/users");
+      const res = await fetch("https://d1qcsdbpz6o0bc.cloudfront.net/users");
       const data = await res.json();
       setUsers(data);
     } catch (err) {

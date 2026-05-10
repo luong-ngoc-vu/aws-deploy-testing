@@ -1,0 +1,40 @@
+import { useState } from "react";
+
+interface IUser {
+  id: number;
+  name: string;
+  email: string;
+}
+
+export default function Users() {
+  const [users, setUsers] = useState<IUser[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  const getUsers = async () => {
+    setLoading(true);
+
+    try {
+      const res = await fetch("http://23.22.116.200:5000/users");
+      const data = await res.json();
+      setUsers(data);
+    } catch (err) {
+      console.error("Error:", err);
+    }
+
+    setLoading(false);
+  };
+
+  return (
+    <div style={{ padding: 20 }}>
+      <button onClick={getUsers}>{loading ? "Loading..." : "Get Users"}</button>
+
+      <ul>
+        {users.map((u) => (
+          <li key={u.id}>
+            {u.name} - {u.email}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}

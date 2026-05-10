@@ -4,3 +4,4 @@ sqlalchemy
 flask-sqlalchemy
 pg8000
 python-dotenv
+flask-cors

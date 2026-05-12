@@ -1,6 +1,6 @@
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import "./styles.scss"; // Import file scss
+import "./Users.scss"; // Import file scss
 
 interface IUser {
   id: number;

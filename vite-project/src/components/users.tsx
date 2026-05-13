@@ -1,3 +1,4 @@
+import { Pagination } from "antd";
 import type { FormEvent } from "react";
 import { useState } from "react";
 import {
@@ -87,12 +88,17 @@ export default function Users() {
   const handleDelete = async () => {
     if (!deleteTarget) return;
 
+    const shouldMoveToPreviousPage = page > 1 && data?.users.length === 1;
+
     await deleteUser.mutateAsync(deleteTarget.id);
+    if (shouldMoveToPreviousPage) {
+      setPage((currentPage) => Math.max(currentPage - 1, 1));
+    }
     setDeleteTarget(null);
     setSuccessMessage("Delete user successfully.");
   };
 
-  const totalPages = data?.pages || 1;
+  const totalRecords = data?.total || 0;
   const isUserModalOpen = modalMode === "create" || Boolean(selectedUser);
 
   return (
@@ -198,35 +204,14 @@ export default function Users() {
       </div>
 
       <div className="pagination-bar">
-        <div className="page-status">
-          Page <b>{page}</b> of <b>{totalPages}</b>
-        </div>
-        <div className="page-actions">
-          <button
-            className="btn-page"
-            disabled={page <= 1}
-            onClick={() => setPage((old) => Math.max(old - 1, 1))}
-            type="button"
-            aria-label="Previous page"
-          >
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="m15 18-6-6 6-6" />
-            </svg>
-            Previous
-          </button>
-          <button
-            className="btn-page"
-            disabled={page >= totalPages}
-            onClick={() => setPage((old) => old + 1)}
-            type="button"
-            aria-label="Next page"
-          >
-            Next
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="m9 18 6-6-6-6" />
-            </svg>
-          </button>
-        </div>
+        <Pagination
+          current={page}
+          pageSize={pageSize}
+          total={totalRecords}
+          showSizeChanger={false}
+          showTotal={(total) => `Total ${total} records`}
+          onChange={(nextPage) => setPage(nextPage)}
+        />
       </div>
 
       {isUserModalOpen && (

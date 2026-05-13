@@ -19,9 +19,18 @@
     gap: 14px;
   }
 
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
   .btn-fancy,
   .btn-page,
-  .btn-cancel {
+  .btn-cancel,
+  .btn-submit,
+  .btn-danger,
+  .btn-delete {
     position: relative;
     overflow: hidden;
     display: inline-flex;
@@ -300,6 +309,14 @@
     background: rgba(255, 255, 255, 0.56);
   }
 
+  .btn-delete {
+    min-height: 34px;
+    padding: 7px 12px;
+    color: #7a0f2e;
+    background: rgba(255, 236, 242, 0.78);
+    border-color: rgba(224, 50, 103, 0.25);
+  }
+
   .modal-overlay {
     position: fixed;
     inset: 0;
@@ -322,6 +339,10 @@
     box-shadow: 0 30px 90px rgba(42, 62, 96, 0.28);
     backdrop-filter: blur(28px) saturate(1.25);
     animation: modal-rise 260ms ease both;
+  }
+
+  .modal-compact {
+    width: min(100%, 420px);
   }
 
   .modal-title {
@@ -380,18 +401,42 @@
         border-color: rgba(24, 200, 189, 0.54);
         box-shadow: 0 0 0 4px rgba(24, 200, 189, 0.12);
       }
+
+      &.input-error {
+        border-color: rgba(224, 50, 103, 0.82);
+        box-shadow: 0 0 0 4px rgba(224, 50, 103, 0.12);
+      }
     }
+  }
+
+  .field-error {
+    color: #b83262;
+    font-size: 0.82rem;
+    font-weight: 800;
   }
 
   .modal-footer {
     display: flex;
     justify-content: flex-end;
+    gap: 10px;
     margin-top: 22px;
   }
 
-  .btn-cancel {
+  .btn-cancel,
+  .btn-submit,
+  .btn-danger {
     padding: 10px 20px;
+  }
+
+  .btn-cancel,
+  .btn-submit {
     background: linear-gradient(135deg, rgba(99, 241, 226, 0.88), rgba(255, 183, 206, 0.82));
+  }
+
+  .btn-danger {
+    color: #fff;
+    border-color: rgba(224, 50, 103, 0.35);
+    background: linear-gradient(135deg, rgba(224, 50, 103, 0.9), rgba(136, 30, 74, 0.84));
   }
 }
 
@@ -449,6 +494,11 @@
     .pagination-bar {
       align-items: stretch;
       flex-direction: column;
+    }
+
+    .header-actions {
+      display: grid;
+      grid-template-columns: 1fr;
     }
 
     .size-selector-group,

@@ -1,4 +1,5 @@
 import os
+import re
 from dotenv import load_dotenv
 from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
@@ -23,6 +24,7 @@ app.config["SQLALCHEMY_DATABASE_URI"] = DB_URL
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 db = SQLAlchemy(app)
+EMAIL_REGEX = re.compile(r"^[^\s@]+@[^\s@]+\.[^\s@]+$")
 
 
 class User(db.Model):
@@ -34,6 +36,40 @@ class User(db.Model):
     created_at = db.Column(
         db.DateTime, nullable=True, server_default=db.func.current_timestamp()
     )
+
+
+def serialize_user(user):
+    return {"id": user.id, "name": user.name, "email": user.email}
+
+
+def validate_user_payload(payload, user_id=None):
+    errors = {}
+    name = (payload.get("name") or "").strip()
+    email = (payload.get("email") or "").strip().lower()
+
+    if not name:
+        errors["name"] = "Name is required."
+
+    if not email:
+        errors["email"] = "Email is required."
+    elif not EMAIL_REGEX.match(email):
+        errors["email"] = "Email is invalid."
+
+    if name:
+        query = User.query.filter(db.func.lower(User.name) == name.lower())
+        if user_id is not None:
+            query = query.filter(User.id != user_id)
+        if query.first():
+            errors["name"] = "Name already exists."
+
+    if email:
+        query = User.query.filter(db.func.lower(User.email) == email.lower())
+        if user_id is not None:
+            query = query.filter(User.id != user_id)
+        if query.first():
+            errors["email"] = "Email already exists."
+
+    return {"name": name, "email": email}, errors
 
 
 @app.route("/")
@@ -50,14 +86,52 @@ def get_users():
 
     return jsonify(
         {
-            "users": [
-                {"id": u.id, "name": u.name, "email": u.email} for u in pagination.items
-            ],
+            "users": [serialize_user(u) for u in pagination.items],
             "total": pagination.total,
             "pages": pagination.pages,
             "current_page": pagination.page,
         }
     )
+
+
+@app.route("/users", methods=["POST"])
+def create_user():
+    payload = request.get_json(silent=True) or {}
+    values, errors = validate_user_payload(payload)
+
+    if errors:
+        return jsonify({"message": "Validation failed.", "errors": errors}), 400
+
+    user = User(name=values["name"], email=values["email"])
+    db.session.add(user)
+    db.session.commit()
+
+    return jsonify({"message": "User created successfully.", "user": serialize_user(user)}), 201
+
+
+@app.route("/users/<int:user_id>", methods=["PUT"])
+def update_user(user_id):
+    user = User.query.get_or_404(user_id)
+    payload = request.get_json(silent=True) or {}
+    values, errors = validate_user_payload(payload, user_id=user_id)
+
+    if errors:
+        return jsonify({"message": "Validation failed.", "errors": errors}), 400
+
+    user.name = values["name"]
+    user.email = values["email"]
+    db.session.commit()
+
+    return jsonify({"message": "User updated successfully.", "user": serialize_user(user)})
+
+
+@app.route("/users/<int:user_id>", methods=["DELETE"])
+def delete_user(user_id):
+    user = User.query.get_or_404(user_id)
+    db.session.delete(user)
+    db.session.commit()
+
+    return jsonify({"message": "User deleted successfully."})
 
 
 @app.route("/health")

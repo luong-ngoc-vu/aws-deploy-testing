@@ -1,62 +1,124 @@
-import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import type { FormEvent } from "react";
 import { useState } from "react";
+import {
+  type IUser,
+  type UserApiError,
+  type UserValidationErrors,
+  useCreateUser,
+  useDeleteUser,
+  useGetUsers,
+  useUpdateUser,
+} from "../hooks/useUsers";
 import "./styles.scss";
 
-interface IUser {
-  id: number;
-  name: string;
-  email: string;
-}
-
-interface IApiResponse {
-  users: IUser[];
-  total: number;
-  pages: number;
-  current_page: number;
-}
-
-const fetchUsers = async (
-  page: number,
-  pageSize: number,
-): Promise<IApiResponse> => {
-  const res = await fetch(
-    `https://d1qcsdbpz6o0bc.cloudfront.net/users?page=${page}&page_size=${pageSize}`,
-  );
-  if (!res.ok) throw new Error("Network response was not ok");
-  return res.json();
-};
+type ModalMode = "create" | "edit";
 
 export default function Users() {
   const [selectedUser, setSelectedUser] = useState<IUser | null>(null);
+  const [modalMode, setModalMode] = useState<ModalMode>("edit");
+  const [formValues, setFormValues] = useState({ name: "", email: "" });
+  const [formErrors, setFormErrors] = useState<UserValidationErrors>({});
+  const [deleteTarget, setDeleteTarget] = useState<IUser | null>(null);
+  const [successMessage, setSuccessMessage] = useState("");
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
 
   const { data, isLoading, isError, isFetching, isPlaceholderData, refetch } =
-    useQuery({
-      queryKey: ["users", page, pageSize],
-      queryFn: () => fetchUsers(page, pageSize),
-      placeholderData: keepPreviousData,
-      staleTime: 5000,
-    });
+    useGetUsers(page, pageSize);
+  const createUser = useCreateUser();
+  const updateUser = useUpdateUser();
+  const deleteUser = useDeleteUser();
+  const isSubmitting =
+    createUser.isPending || updateUser.isPending || deleteUser.isPending;
 
-  const closeModal = () => setSelectedUser(null);
+  const openCreateModal = () => {
+    setModalMode("create");
+    setSelectedUser(null);
+    setFormValues({ name: "", email: "" });
+    setFormErrors({});
+  };
+
+  const openEditModal = (user: IUser) => {
+    setModalMode("edit");
+    setSelectedUser(user);
+    setFormValues({ name: user.name, email: user.email });
+    setFormErrors({});
+  };
+
+  const closeModal = () => {
+    setModalMode("edit");
+    setSelectedUser(null);
+    setFormErrors({});
+    setFormValues({ name: "", email: "" });
+  };
+
+  const handleApiError = (error: UserApiError) => {
+    if (error.errors) {
+      setFormErrors(error.errors);
+      return;
+    }
+
+    setFormErrors({ email: "Request failed. Please try again." });
+  };
+
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setFormErrors({});
+
+    try {
+      if (modalMode === "create") {
+        await createUser.mutateAsync(formValues);
+        setSuccessMessage("Create user successfully.");
+        setPage(1);
+      } else if (selectedUser) {
+        await updateUser.mutateAsync({
+          id: selectedUser.id,
+          payload: formValues,
+        });
+        setSuccessMessage("Update user successfully.");
+      }
+
+      closeModal();
+    } catch (error) {
+      handleApiError(error as UserApiError);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!deleteTarget) return;
+
+    await deleteUser.mutateAsync(deleteTarget.id);
+    setDeleteTarget(null);
+    setSuccessMessage("Delete user successfully.");
+  };
+
   const totalPages = data?.pages || 1;
+  const isUserModalOpen = modalMode === "create" || Boolean(selectedUser);
 
   return (
     <div className="users-page-container">
       <div className="controls-header">
-        <button
-          className="btn-fancy"
-          onClick={() => refetch()}
-          disabled={isFetching}
-          type="button"
-        >
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M21 12a9 9 0 1 1-2.6-6.4" />
-            <path d="M21 4v6h-6" />
-          </svg>
-          {isFetching ? "Syncing" : "Refresh users"}
-        </button>
+        <div className="header-actions">
+          <button className="btn-fancy" onClick={openCreateModal} type="button">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 5v14" />
+              <path d="M5 12h14" />
+            </svg>
+            Create user
+          </button>
+          <button
+            className="btn-fancy"
+            onClick={() => refetch()}
+            disabled={isFetching}
+            type="button"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M21 12a9 9 0 1 1-2.6-6.4" />
+              <path d="M21 4v6h-6" />
+            </svg>
+            {isFetching ? "Syncing" : "Refresh users"}
+          </button>
+        </div>
 
         <div className="size-selector-group">
           <span>Rows per page</span>
@@ -105,16 +167,29 @@ export default function Users() {
                 <th>ID</th>
                 <th>Name</th>
                 <th>Email</th>
+                <th>Action</th>
               </tr>
             </thead>
             <tbody className={isPlaceholderData ? "is-muted" : ""}>
               {data?.users.map((u) => (
-                <tr key={u.id} onClick={() => setSelectedUser(u)}>
+                <tr key={u.id} onClick={() => openEditModal(u)}>
                   <td>
                     <b>#{u.id}</b>
                   </td>
                   <td>{u.name}</td>
                   <td>{u.email}</td>
+                  <td>
+                    <button
+                      className="btn-delete"
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        setDeleteTarget(u);
+                      }}
+                      type="button"
+                    >
+                      Delete
+                    </button>
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -154,31 +229,132 @@ export default function Users() {
         </div>
       </div>
 
-      {selectedUser && (
+      {isUserModalOpen && (
         <div className="modal-overlay" onClick={closeModal}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+          <form
+            className="modal-content"
+            onClick={(e) => e.stopPropagation()}
+            onSubmit={handleSubmit}
+          >
             <div className="modal-title">
-              <span className="user-avatar">{selectedUser.name.charAt(0)}</span>
+              <span className="user-avatar">
+                {(formValues.name || "U").charAt(0)}
+              </span>
               <div>
-                <h2>Information</h2>
-                <p>User profile snapshot</p>
+                <h2>{modalMode === "create" ? "Create user" : "Update user"}</h2>
+                <p>
+                  {modalMode === "create"
+                    ? "Add a new user profile"
+                    : "Edit user name and email"}
+                </p>
               </div>
             </div>
-            <div className="form-group">
-              <label>ID</label>
-              <input type="text" value={selectedUser.id} readOnly />
-            </div>
+            {modalMode === "edit" && selectedUser && (
+              <div className="form-group">
+                <label>ID</label>
+                <input type="text" value={selectedUser.id} readOnly />
+              </div>
+            )}
             <div className="form-group">
               <label>Name</label>
-              <input type="text" value={selectedUser.name} readOnly />
+              <input
+                className={formErrors.name ? "input-error" : ""}
+                type="text"
+                value={formValues.name}
+                onChange={(event) =>
+                  setFormValues((current) => ({
+                    ...current,
+                    name: event.target.value,
+                  }))
+                }
+              />
+              {formErrors.name && (
+                <span className="field-error">{formErrors.name}</span>
+              )}
             </div>
             <div className="form-group">
               <label>Email</label>
-              <input type="text" value={selectedUser.email} readOnly />
+              <input
+                className={formErrors.email ? "input-error" : ""}
+                type="email"
+                value={formValues.email}
+                onChange={(event) =>
+                  setFormValues((current) => ({
+                    ...current,
+                    email: event.target.value,
+                  }))
+                }
+              />
+              {formErrors.email && (
+                <span className="field-error">{formErrors.email}</span>
+              )}
             </div>
             <div className="modal-footer">
               <button className="btn-cancel" onClick={closeModal} type="button">
-                Close
+                Cancel
+              </button>
+              <button className="btn-submit" disabled={isSubmitting} type="submit">
+                {isSubmitting ? "Saving" : "Save"}
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
+
+      {deleteTarget && (
+        <div className="modal-overlay" onClick={() => setDeleteTarget(null)}>
+          <div
+            className="modal-content modal-compact"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="modal-title">
+              <span className="user-avatar">!</span>
+              <div>
+                <h2>Delete user</h2>
+                <p>Are you sure you want to delete {deleteTarget.name}?</p>
+              </div>
+            </div>
+            <div className="modal-footer">
+              <button
+                className="btn-cancel"
+                onClick={() => setDeleteTarget(null)}
+                type="button"
+              >
+                Cancel
+              </button>
+              <button
+                className="btn-danger"
+                disabled={isSubmitting}
+                onClick={handleDelete}
+                type="button"
+              >
+                OK
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {successMessage && (
+        <div className="modal-overlay" onClick={() => setSuccessMessage("")}>
+          <div
+            className="modal-content modal-compact"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="modal-title">
+              <span className="user-avatar">OK</span>
+              <div>
+                <h2>Success</h2>
+                <p>{successMessage}</p>
+              </div>
+            </div>
+            <div className="modal-footer">
+              <button
+                className="btn-submit"
+                onClick={() => setSuccessMessage("")}
+                type="button"
+              >
+                OK
               </button>
             </div>
           </div>

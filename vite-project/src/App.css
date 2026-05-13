@@ -5,6 +5,84 @@
   padding: 24px 0 36px;
 }
 
+.backend-unavailable-screen {
+  min-height: 100svh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background:
+    linear-gradient(130deg, rgba(147, 232, 224, 0.72), transparent 34%),
+    linear-gradient(230deg, rgba(250, 165, 190, 0.62), transparent 36%),
+    linear-gradient(315deg, rgba(178, 170, 255, 0.58), transparent 44%),
+    #f9fbff;
+  text-align: center;
+}
+
+.backend-unavailable-screen svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.backend-unavailable-message {
+  display: grid;
+  justify-items: center;
+  gap: 18px;
+  max-width: 620px;
+}
+
+.backend-unavailable-message > svg {
+  width: 64px;
+  height: 64px;
+  color: #b83262;
+}
+
+.backend-unavailable-message h1 {
+  color: var(--text-h);
+  font-size: clamp(2.2rem, 6vw, 4.8rem);
+  line-height: 0.98;
+}
+
+.backend-unavailable-message p {
+  max-width: 520px;
+  color: #566174;
+  font-size: 1.08rem;
+  font-weight: 700;
+}
+
+.backend-unavailable-action {
+  display: inline-flex;
+  min-height: 48px;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  border: 1px solid rgba(255, 255, 255, 0.68);
+  border-radius: 8px;
+  padding: 11px 18px;
+  color: #092b35;
+  font-weight: 800;
+  background: linear-gradient(135deg, rgba(99, 241, 226, 0.9), rgba(255, 183, 206, 0.86));
+  cursor: pointer;
+  transition:
+    transform 180ms ease,
+    box-shadow 180ms ease,
+    opacity 180ms ease;
+}
+
+.backend-unavailable-action:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 0 28px rgba(24, 200, 189, 0.34);
+}
+
+.backend-unavailable-action:disabled {
+  cursor: not-allowed;
+  opacity: 0.52;
+}
+
 .glass-nav {
   position: sticky;
   top: 16px;

@@ -2,13 +2,73 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import heroImg from "./assets/hero.png";
 import "./App.css";
 import Users from "./components/users";
+import { useBackendHealth } from "./hooks/useBackendHealth";
 
 const queryClient = new QueryClient();
 
-function App() {
+function BackendUnavailableScreen({
+  isChecking,
+  onRetry,
+}: {
+  isChecking: boolean;
+  onRetry: () => void;
+}) {
   return (
-    <QueryClientProvider client={queryClient}>
-      <main className="app-shell">
+    <main className="backend-unavailable-screen" role="alert" aria-live="assertive">
+      <div className="backend-unavailable-message">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 18.5h.01" />
+          <path d="M8.2 14.8a5.4 5.4 0 0 1 7.6 0" />
+          <path d="M4.9 11.5a10 10 0 0 1 14.2 0" />
+          <path d="M2 8.6a14.2 14.2 0 0 1 20 0" />
+          <path d="m3 3 18 18" />
+        </svg>
+        <h1>Backend unavailable</h1>
+        <p>The server cannot be reached right now. It may be starting up or temporarily offline.</p>
+        <button
+          className="backend-unavailable-action"
+          onClick={onRetry}
+          disabled={isChecking}
+          type="button"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M21 12a9 9 0 1 1-2.6-6.4" />
+            <path d="M21 4v6h-6" />
+          </svg>
+          {isChecking ? "Checking" : "Try again"}
+        </button>
+      </div>
+    </main>
+  );
+}
+
+function AppContent() {
+  const { isError, isFetching, isPending, refetch } = useBackendHealth();
+
+  if (isPending) {
+    return (
+      <main className="backend-unavailable-screen" role="status" aria-live="polite">
+        <div className="backend-unavailable-message">
+          <h1>Checking backend</h1>
+          <p>Connecting to the server before loading the application.</p>
+        </div>
+      </main>
+    );
+  }
+
+  if (isError) {
+    return (
+      <BackendUnavailableScreen
+        isChecking={isFetching}
+        onRetry={() => {
+          void refetch();
+        }}
+      />
+    );
+  }
+
+  return (
+    <main className="app-shell">
         <nav className="glass-nav" aria-label="Primary navigation">
           <a className="brand-mark" href="#overview" aria-label="Auralis home">
             <span className="brand-icon" aria-hidden="true">
@@ -118,6 +178,13 @@ function App() {
           </div>
         </footer>
       </main>
+  );
+}
+
+function App() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <AppContent />
     </QueryClientProvider>
   );
 }

@@ -50,10 +50,15 @@
       border-color 180ms ease;
 
     &::after {
-      content: "";
+      content: '';
       position: absolute;
       inset: -120% -45%;
-      background: linear-gradient(115deg, transparent 38%, rgba(255, 255, 255, 0.78), transparent 62%);
+      background: linear-gradient(
+        115deg,
+        transparent 38%,
+        rgba(255, 255, 255, 0.78),
+        transparent 62%
+      );
       transform: translateX(-56%) rotate(8deg);
       transition: transform 560ms ease;
     }
@@ -99,7 +104,7 @@
     position: relative;
 
     &::after {
-      content: "";
+      content: '';
       position: absolute;
       right: 14px;
       top: 50%;
@@ -125,7 +130,9 @@
     outline: none;
     cursor: pointer;
     backdrop-filter: blur(14px);
-    transition: border-color 180ms ease, box-shadow 180ms ease;
+    transition:
+      border-color 180ms ease,
+      box-shadow 180ms ease;
 
     &:hover,
     &:focus {
@@ -255,7 +262,7 @@
       animation: liquid-wave 1.8s ease-in-out infinite;
 
       &::before {
-        content: "";
+        content: '';
         position: absolute;
         top: -18px;
         left: 0;

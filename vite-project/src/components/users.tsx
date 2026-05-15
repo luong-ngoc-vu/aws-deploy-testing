@@ -1,6 +1,6 @@
-import { Pagination } from "antd";
-import type { FormEvent } from "react";
-import { useState } from "react";
+import { Pagination } from 'antd'
+import type { FormEvent } from 'react'
+import { useState } from 'react'
 import {
   type IUser,
   type UserApiError,
@@ -9,97 +9,98 @@ import {
   useDeleteUser,
   useGetUsers,
   useUpdateUser,
-} from "../hooks/useUsers";
-import "./styles.scss";
+} from '../hooks/useUsers'
+import './styles.scss'
 
-type ModalMode = "create" | "edit";
+type ModalMode = 'create' | 'edit'
 
 export default function Users() {
-  const [selectedUser, setSelectedUser] = useState<IUser | null>(null);
-  const [modalMode, setModalMode] = useState<ModalMode>("edit");
-  const [formValues, setFormValues] = useState({ name: "", email: "" });
-  const [formErrors, setFormErrors] = useState<UserValidationErrors>({});
-  const [deleteTarget, setDeleteTarget] = useState<IUser | null>(null);
-  const [successMessage, setSuccessMessage] = useState("");
-  const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
+  const [selectedUser, setSelectedUser] = useState<IUser | null>(null)
+  const [modalMode, setModalMode] = useState<ModalMode>('edit')
+  const [formValues, setFormValues] = useState({ name: '', email: '' })
+  const [formErrors, setFormErrors] = useState<UserValidationErrors>({})
+  const [deleteTarget, setDeleteTarget] = useState<IUser | null>(null)
+  const [successMessage, setSuccessMessage] = useState('')
+  const [page, setPage] = useState(1)
+  const [pageSize, setPageSize] = useState(10)
 
-  const { data, isLoading, isError, isFetching, isPlaceholderData, refetch } =
-    useGetUsers(page, pageSize);
-  const createUser = useCreateUser();
-  const updateUser = useUpdateUser();
-  const deleteUser = useDeleteUser();
-  const isSubmitting =
-    createUser.isPending || updateUser.isPending || deleteUser.isPending;
+  const { data, isLoading, isError, isFetching, isPlaceholderData, refetch } = useGetUsers(
+    page,
+    pageSize,
+  )
+  const createUser = useCreateUser()
+  const updateUser = useUpdateUser()
+  const deleteUser = useDeleteUser()
+  const isSubmitting = createUser.isPending || updateUser.isPending || deleteUser.isPending
 
   const openCreateModal = () => {
-    setModalMode("create");
-    setSelectedUser(null);
-    setFormValues({ name: "", email: "" });
-    setFormErrors({});
-  };
+    setModalMode('create')
+    setSelectedUser(null)
+    setFormValues({ name: '', email: '' })
+    setFormErrors({})
+  }
 
   const openEditModal = (user: IUser) => {
-    setModalMode("edit");
-    setSelectedUser(user);
-    setFormValues({ name: user.name, email: user.email });
-    setFormErrors({});
-  };
+    setModalMode('edit')
+    setSelectedUser(user)
+    setFormValues({ name: user.name, email: user.email })
+    setFormErrors({})
+  }
 
   const closeModal = () => {
-    setModalMode("edit");
-    setSelectedUser(null);
-    setFormErrors({});
-    setFormValues({ name: "", email: "" });
-  };
+    setModalMode('edit')
+    setSelectedUser(null)
+    setFormErrors({})
+    setFormValues({ name: '', email: '' })
+  }
 
   const handleApiError = (error: UserApiError) => {
     if (error.errors) {
-      setFormErrors(error.errors);
-      return;
+      setFormErrors(error.errors)
+      return
     }
 
-    setFormErrors({ email: "Request failed. Please try again." });
-  };
+    setFormErrors({ email: 'Request failed. Please try again.' })
+  }
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setFormErrors({});
+    event.preventDefault()
+    setFormErrors({})
 
     try {
-      if (modalMode === "create") {
-        await createUser.mutateAsync(formValues);
-        setSuccessMessage("Create user successfully.");
-        setPage(1);
+      if (modalMode === 'create') {
+        await createUser.mutateAsync(formValues)
+        setSuccessMessage('Create user successfully.')
+        setPage(1)
       } else if (selectedUser) {
         await updateUser.mutateAsync({
           id: selectedUser.id,
           payload: formValues,
-        });
-        setSuccessMessage("Update user successfully.");
+        })
+        setSuccessMessage('Update user successfully.')
       }
 
-      closeModal();
+      closeModal()
     } catch (error) {
-      handleApiError(error as UserApiError);
+      handleApiError(error as UserApiError)
     }
-  };
+  }
 
   const handleDelete = async () => {
-    if (!deleteTarget) return;
+    if (!deleteTarget) return
 
-    const shouldMoveToPreviousPage = page > 1 && data?.users.length === 1;
+    const shouldMoveToPreviousPage = page > 1 && data?.users.length === 1
 
-    await deleteUser.mutateAsync(deleteTarget.id);
+    await deleteUser.mutateAsync(deleteTarget.id)
     if (shouldMoveToPreviousPage) {
-      setPage((currentPage) => Math.max(currentPage - 1, 1));
+      setPage((currentPage) => Math.max(currentPage - 1, 1))
     }
-    setDeleteTarget(null);
-    setSuccessMessage("Delete user successfully.");
-  };
+    setDeleteTarget(null)
+    setSuccessMessage('Delete user successfully.')
+  }
 
-  const totalRecords = data?.total || 0;
-  const isUserModalOpen = modalMode === "create" || Boolean(selectedUser);
+  const totalRecords = data?.total || 0
+  const isUserModalOpen = modalMode === 'create' || Boolean(selectedUser)
 
   return (
     <div className="users-page-container">
@@ -122,7 +123,7 @@ export default function Users() {
               <path d="M21 12a9 9 0 1 1-2.6-6.4" />
               <path d="M21 4v6h-6" />
             </svg>
-            {isFetching ? "Syncing" : "Refresh users"}
+            {isFetching ? 'Syncing' : 'Refresh users'}
           </button>
         </div>
 
@@ -133,8 +134,8 @@ export default function Users() {
               className="select-size"
               value={pageSize}
               onChange={(e) => {
-                setPageSize(Number(e.target.value));
-                setPage(1);
+                setPageSize(Number(e.target.value))
+                setPage(1)
               }}
             >
               <option value={10}>10</option>
@@ -145,7 +146,7 @@ export default function Users() {
         </div>
       </div>
 
-      <div className={`glow-progress ${isFetching ? "is-active" : ""}`}>
+      <div className={`glow-progress ${isFetching ? 'is-active' : ''}`}>
         <span></span>
       </div>
 
@@ -176,7 +177,7 @@ export default function Users() {
                 <th>Action</th>
               </tr>
             </thead>
-            <tbody className={isPlaceholderData ? "is-muted" : ""}>
+            <tbody className={isPlaceholderData ? 'is-muted' : ''}>
               {data?.users.map((u) => (
                 <tr key={u.id} onClick={() => openEditModal(u)}>
                   <td>
@@ -188,8 +189,8 @@ export default function Users() {
                     <button
                       className="btn-delete"
                       onClick={(event) => {
-                        event.stopPropagation();
-                        setDeleteTarget(u);
+                        event.stopPropagation()
+                        setDeleteTarget(u)
                       }}
                       type="button"
                     >
@@ -222,19 +223,15 @@ export default function Users() {
             onSubmit={handleSubmit}
           >
             <div className="modal-title">
-              <span className="user-avatar">
-                {(formValues.name || "U").charAt(0)}
-              </span>
+              <span className="user-avatar">{(formValues.name || 'U').charAt(0)}</span>
               <div>
-                <h2>{modalMode === "create" ? "Create user" : "Update user"}</h2>
+                <h2>{modalMode === 'create' ? 'Create user' : 'Update user'}</h2>
                 <p>
-                  {modalMode === "create"
-                    ? "Add a new user profile"
-                    : "Edit user name and email"}
+                  {modalMode === 'create' ? 'Add a new user profile' : 'Edit user name and email'}
                 </p>
               </div>
             </div>
-            {modalMode === "edit" && selectedUser && (
+            {modalMode === 'edit' && selectedUser && (
               <div className="form-group">
                 <label>ID</label>
                 <input type="text" value={selectedUser.id} readOnly />
@@ -243,7 +240,7 @@ export default function Users() {
             <div className="form-group">
               <label>Name</label>
               <input
-                className={formErrors.name ? "input-error" : ""}
+                className={formErrors.name ? 'input-error' : ''}
                 type="text"
                 value={formValues.name}
                 onChange={(event) =>
@@ -253,14 +250,12 @@ export default function Users() {
                   }))
                 }
               />
-              {formErrors.name && (
-                <span className="field-error">{formErrors.name}</span>
-              )}
+              {formErrors.name && <span className="field-error">{formErrors.name}</span>}
             </div>
             <div className="form-group">
               <label>Email</label>
               <input
-                className={formErrors.email ? "input-error" : ""}
+                className={formErrors.email ? 'input-error' : ''}
                 type="email"
                 value={formValues.email}
                 onChange={(event) =>
@@ -270,16 +265,14 @@ export default function Users() {
                   }))
                 }
               />
-              {formErrors.email && (
-                <span className="field-error">{formErrors.email}</span>
-              )}
+              {formErrors.email && <span className="field-error">{formErrors.email}</span>}
             </div>
             <div className="modal-footer">
               <button className="btn-cancel" onClick={closeModal} type="button">
                 Cancel
               </button>
               <button className="btn-submit" disabled={isSubmitting} type="submit">
-                {isSubmitting ? "Saving" : "Save"}
+                {isSubmitting ? 'Saving' : 'Save'}
               </button>
             </div>
           </form>
@@ -288,10 +281,7 @@ export default function Users() {
 
       {deleteTarget && (
         <div className="modal-overlay" onClick={() => setDeleteTarget(null)}>
-          <div
-            className="modal-content modal-compact"
-            onClick={(e) => e.stopPropagation()}
-          >
+          <div className="modal-content modal-compact" onClick={(e) => e.stopPropagation()}>
             <div className="modal-title">
               <span className="user-avatar">!</span>
               <div>
@@ -300,11 +290,7 @@ export default function Users() {
               </div>
             </div>
             <div className="modal-footer">
-              <button
-                className="btn-cancel"
-                onClick={() => setDeleteTarget(null)}
-                type="button"
-              >
+              <button className="btn-cancel" onClick={() => setDeleteTarget(null)} type="button">
                 Cancel
               </button>
               <button
@@ -321,11 +307,8 @@ export default function Users() {
       )}
 
       {successMessage && (
-        <div className="modal-overlay" onClick={() => setSuccessMessage("")}>
-          <div
-            className="modal-content modal-compact"
-            onClick={(e) => e.stopPropagation()}
-          >
+        <div className="modal-overlay" onClick={() => setSuccessMessage('')}>
+          <div className="modal-content modal-compact" onClick={(e) => e.stopPropagation()}>
             <div className="modal-title">
               <span className="user-avatar">OK</span>
               <div>
@@ -334,11 +317,7 @@ export default function Users() {
               </div>
             </div>
             <div className="modal-footer">
-              <button
-                className="btn-submit"
-                onClick={() => setSuccessMessage("")}
-                type="button"
-              >
+              <button className="btn-submit" onClick={() => setSuccessMessage('')} type="button">
                 OK
               </button>
             </div>
@@ -346,5 +325,5 @@ export default function Users() {
         </div>
       )}
     </div>
-  );
+  )
 }

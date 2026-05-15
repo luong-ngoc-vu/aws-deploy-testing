@@ -4,7 +4,7 @@ import WeatherWidget from './WeatherWidget'
 const navLinks = ['Home', 'Menu', 'About', 'Contact']
 
 function formatDateTime(date: Date) {
-  return new Intl.DateTimeFormat('vi-VN', {
+  return new Intl.DateTimeFormat('en-US', {
     weekday: 'short',
     year: 'numeric',
     month: '2-digit',
@@ -12,7 +12,7 @@ function formatDateTime(date: Date) {
     hour: '2-digit',
     minute: '2-digit',
     second: '2-digit',
-    hour12: false,
+    hour12: true,
   }).format(date)
 }
 

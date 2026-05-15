@@ -195,14 +195,14 @@ export default function WeatherWidget() {
 
       {isForecastOpen && (
         <div
-          className="fixed inset-0 z-[100] grid place-items-center bg-stone-950/45 px-4 py-6 backdrop-blur-md"
+          className="fixed inset-0 z-[100] flex min-h-svh items-center justify-center bg-white/20 px-4 py-6 backdrop-blur-md"
           role="dialog"
           aria-modal="true"
           aria-labelledby="forecast-title"
           onClick={() => setIsForecastOpen(false)}
         >
           <div
-            className="relative w-full max-w-md scale-100 rounded-md border border-white/70 bg-[#fbf7ef]/95 p-5 shadow-[0_28px_90px_rgba(28,25,23,0.38)] ring-1 ring-stone-950/5"
+            className="relative z-[101] w-full max-w-md rounded-md border border-white/80 bg-[#fbf7ef] p-5 shadow-[0_34px_110px_rgba(28,25,23,0.45)] ring-1 ring-stone-950/10"
             onClick={(event) => event.stopPropagation()}
           >
             <div className="flex items-start justify-between gap-4">

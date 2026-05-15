@@ -10,6 +10,10 @@ const FORECAST_API_URL = WEATHER_API_URL.replace('/weather', '/forecast')
 const openWeatherApiKey = import.meta.env.VITE_OPENWEATHER_API_KEY as string | undefined
 
 type WeatherData = {
+  name?: string
+  sys?: {
+    country?: string
+  }
   main: {
     temp: number
   }
@@ -47,8 +51,18 @@ type DailyForecast = {
 
 type WeatherState =
   | { status: 'loading' }
-  | { status: 'success'; current: WeatherData; forecast: ForecastResponse; fetchedAt: number }
+  | {
+      status: 'success'
+      current: WeatherData
+      forecast: ForecastResponse
+      fetchedAt: number
+      locationLabel: string
+    }
   | { status: 'error'; message: string }
+
+type WeatherRequestParams =
+  | { appid: string; lat: number; lon: number; units: 'metric' }
+  | { appid: string; q: string; units: 'metric' }
 
 function toLocalTimestamp(dt: number, timezone: number) {
   return (dt + timezone) * 1000
@@ -99,6 +113,39 @@ function getDailyForecasts(forecast: ForecastResponse, fetchedAt: number): Daily
     })
 }
 
+function getUserCoordinates(): Promise<GeolocationCoordinates | null> {
+  if (!navigator.geolocation) {
+    return Promise.resolve(null)
+  }
+
+  return new Promise((resolve) => {
+    navigator.geolocation.getCurrentPosition(
+      (position) => resolve(position.coords),
+      () => resolve(null),
+      {
+        enableHighAccuracy: false,
+        maximumAge: 10 * 60 * 1000,
+        timeout: 5000,
+      },
+    )
+  })
+}
+
+function getLocationLabel(data: WeatherData, isDetectedLocation: boolean) {
+  if (!isDetectedLocation) {
+    return DISPLAY_LOCATION
+  }
+
+  const city = data.name?.trim()
+  const country = data.sys?.country?.trim()
+
+  if (city && country) {
+    return `${city}, ${country}`
+  }
+
+  return city || 'Current location'
+}
+
 export default function WeatherWidget() {
   const [weatherState, setWeatherState] = useState<WeatherState>(
     openWeatherApiKey
@@ -119,21 +166,27 @@ export default function WeatherWidget() {
 
     const fetchWeather = async () => {
       try {
-        const [current, forecast] = await Promise.all([
-          axios.get<WeatherData>(WEATHER_API_URL, {
-            params: {
+        const coordinates = await getUserCoordinates()
+        const requestParams: WeatherRequestParams = coordinates
+          ? {
+              appid: openWeatherApiKey,
+              lat: coordinates.latitude,
+              lon: coordinates.longitude,
+              units: 'metric',
+            }
+          : {
               appid: openWeatherApiKey,
               q: DEFAULT_CITY,
               units: 'metric',
-            },
+            }
+
+        const [current, forecast] = await Promise.all([
+          axios.get<WeatherData>(WEATHER_API_URL, {
+            params: requestParams,
             signal: controller.signal,
           }),
           axios.get<ForecastResponse>(FORECAST_API_URL, {
-            params: {
-              appid: openWeatherApiKey,
-              q: DEFAULT_CITY,
-              units: 'metric',
-            },
+            params: requestParams,
             signal: controller.signal,
           }),
         ])
@@ -143,6 +196,7 @@ export default function WeatherWidget() {
           current: current.data,
           forecast: forecast.data,
           fetchedAt: Math.floor(Date.now() / 1000),
+          locationLabel: getLocationLabel(current.data, Boolean(coordinates)),
         })
       } catch (error) {
         if (axios.isCancel(error)) return
@@ -186,7 +240,7 @@ export default function WeatherWidget() {
         className="flex flex-wrap items-center gap-x-4 gap-y-1 rounded-md border border-white/40 bg-white/80 px-3 py-2 text-left text-sm shadow-sm transition hover:border-amber-300 hover:bg-white"
         aria-haspopup="dialog"
       >
-        <span className="font-semibold text-stone-900">{DISPLAY_LOCATION}</span>
+        <span className="font-semibold text-stone-900">{weatherState.locationLabel}</span>
         <span className="font-bold text-stone-950">
           {Math.round(weatherState.current.main.temp)}°C
         </span>
@@ -210,7 +264,7 @@ export default function WeatherWidget() {
                 <h2 className="font-serif text-2xl font-bold text-stone-950" id="forecast-title">
                   Forecast
                 </h2>
-                <p className="mt-1 text-sm text-stone-600">{DISPLAY_LOCATION}</p>
+                <p className="mt-1 text-sm text-stone-600">{weatherState.locationLabel}</p>
               </div>
               <button
                 type="button"

@@ -56,10 +56,10 @@ function toLocalTimestamp(dt: number, timezone: number) {
 
 function formatForecastLabel(dateString: string) {
   const [year, month, day] = dateString.split('-').map(Number)
-  return new Date(Date.UTC(year, month - 1, day)).toLocaleDateString('vi-VN', {
+  return new Date(Date.UTC(year, month - 1, day)).toLocaleDateString('en-US', {
     weekday: 'short',
-    day: '2-digit',
     month: '2-digit',
+    day: '2-digit',
   })
 }
 

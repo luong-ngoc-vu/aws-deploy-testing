@@ -25,8 +25,8 @@ jobs:
 
       - name: Build
         env:
-          OPENWEATHER_API_KEY: ${{ secrets.OPENWEATHER_API_KEY }}
-          WEATHER_API_URL: ${{ secrets.WEATHER_API_URL }}
+          VITE_OPENWEATHER_API_KEY: ${{ secrets.VITE_OPENWEATHER_API_KEY }}
+          VITE_WEATHER_API_URL: ${{ secrets.VITE_WEATHER_API_URL }}
         run: |
           cd vite-project
           npm run build

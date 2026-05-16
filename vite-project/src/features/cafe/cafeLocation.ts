@@ -15,7 +15,7 @@ export type CafeLocationContextValue = {
 
 export const defaultCafeLocation: CafeLocation = {
   id: 'dn-city',
-  label: 'DN City',
+  label: 'Đà Nẵng',
   lat: 16.0471,
   lon: 108.2068,
   source: 'preset',

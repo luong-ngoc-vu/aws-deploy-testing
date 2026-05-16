@@ -1,7 +1,12 @@
 import { useEffect, useState } from 'react'
 import WeatherWidget from './WeatherWidget'
 
-const navLinks = ['Home', 'Menu', 'About', 'Contact']
+const navLinks = [
+  { label: 'Trang chủ', href: '#home' },
+  { label: 'Menu', href: '#menu' },
+  { label: 'Giới thiệu', href: '#about' },
+  { label: 'Liên hệ', href: '#contact' },
+]
 
 type NavbarProps = {
   isDarkMode: boolean
@@ -9,7 +14,7 @@ type NavbarProps = {
 }
 
 function formatDateTime(date: Date) {
-  return new Intl.DateTimeFormat('en-US', {
+  return new Intl.DateTimeFormat('vi-VN', {
     weekday: 'short',
     year: 'numeric',
     month: '2-digit',
@@ -17,7 +22,7 @@ function formatDateTime(date: Date) {
     hour: '2-digit',
     minute: '2-digit',
     second: '2-digit',
-    hour12: true,
+    hour12: false,
   }).format(date)
 }
 
@@ -44,7 +49,7 @@ export default function Navbar({ isDarkMode, onToggleTheme }: NavbarProps) {
     <header className="sticky top-0 z-30 border-b border-stone-900/10 bg-[#fbf7ef]/90 backdrop-blur transition-colors dark:border-white/10 dark:bg-stone-950/90">
       <nav
         className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:px-8"
-        aria-label="Primary navigation"
+        aria-label="Điều hướng chính"
       >
         <a
           className="flex items-center gap-3 font-serif text-xl font-bold text-stone-950 dark:text-stone-100"
@@ -53,17 +58,17 @@ export default function Navbar({ isDarkMode, onToggleTheme }: NavbarProps) {
           <span className="grid size-10 place-items-center rounded-md bg-stone-950 text-lg text-amber-200 dark:bg-amber-300 dark:text-stone-950">
             C
           </span>
-          Hearth & Bean
+          Góc Cà Phê
         </a>
 
         <div className="hidden items-center gap-6 md:flex">
           {navLinks.map((link) => (
             <a
               className="text-sm font-semibold text-stone-700 transition hover:text-stone-950 dark:text-stone-300 dark:hover:text-white"
-              href={`#${link.toLowerCase()}`}
-              key={link}
+              href={link.href}
+              key={link.href}
             >
-              {link}
+              {link.label}
             </a>
           ))}
         </div>
@@ -77,10 +82,10 @@ export default function Navbar({ isDarkMode, onToggleTheme }: NavbarProps) {
           </time>
           <WeatherWidget />
           <button
-            aria-label={isDarkMode ? 'Switch to light mode' : 'Switch to dark mode'}
+            aria-label={isDarkMode ? 'Chuyển sang giao diện sáng' : 'Chuyển sang giao diện tối'}
             className="grid size-10 place-items-center rounded-md border border-stone-200 bg-white/75 text-stone-700 shadow-sm transition hover:bg-white dark:border-stone-700 dark:bg-stone-900 dark:text-stone-100 dark:hover:bg-stone-800"
             onClick={onToggleTheme}
-            title={isDarkMode ? 'Switch to light mode' : 'Switch to dark mode'}
+            title={isDarkMode ? 'Chuyển sang giao diện sáng' : 'Chuyển sang giao diện tối'}
             type="button"
           >
             {isDarkMode ? (

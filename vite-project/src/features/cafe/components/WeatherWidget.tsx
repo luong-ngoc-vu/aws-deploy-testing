@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import { useCafeLocation } from '../useCafeLocation'
 
 const DEFAULT_CITY = 'Da Nang,VN'
-const DISPLAY_LOCATION = 'Da Nang, VN'
+const DISPLAY_LOCATION = 'Đà Nẵng, Việt Nam'
 const WEATHER_API_URL =
   (import.meta.env.VITE_WEATHER_API_URL as string | undefined) ||
   'https://api.openweathermap.org/data/2.5/weather'
@@ -62,8 +62,8 @@ type WeatherState =
   | { status: 'error'; message: string }
 
 type WeatherRequestParams =
-  | { appid: string; lat: number; lon: number; units: 'metric' }
-  | { appid: string; q: string; units: 'metric' }
+  | { appid: string; lat: number; lon: number; units: 'metric'; lang: 'vi' }
+  | { appid: string; q: string; units: 'metric'; lang: 'vi' }
 
 function toLocalTimestamp(dt: number, timezone: number) {
   return (dt + timezone) * 1000
@@ -71,7 +71,7 @@ function toLocalTimestamp(dt: number, timezone: number) {
 
 function formatForecastLabel(dateString: string) {
   const [year, month, day] = dateString.split('-').map(Number)
-  return new Date(Date.UTC(year, month - 1, day)).toLocaleDateString('en-US', {
+  return new Date(Date.UTC(year, month - 1, day)).toLocaleDateString('vi-VN', {
     weekday: 'short',
     month: '2-digit',
     day: '2-digit',
@@ -144,7 +144,7 @@ function getLocationLabel(data: WeatherData, isDetectedLocation: boolean) {
     return `${city}, ${country}`
   }
 
-  return city || 'Current location'
+  return city || 'Vị trí hiện tại'
 }
 
 function getDetectedLocation(data: WeatherData, coordinates: GeolocationCoordinates) {
@@ -164,7 +164,7 @@ export default function WeatherWidget() {
       ? { status: 'loading' }
       : {
           status: 'error',
-          message: 'Missing weather API key',
+          message: 'Thiếu khóa API thời tiết',
         },
   )
   const [isForecastOpen, setIsForecastOpen] = useState(false)
@@ -185,11 +185,13 @@ export default function WeatherWidget() {
               lat: coordinates.latitude,
               lon: coordinates.longitude,
               units: 'metric',
+              lang: 'vi',
             }
           : {
               appid: openWeatherApiKey,
               q: DEFAULT_CITY,
               units: 'metric',
+              lang: 'vi',
             }
 
         const [current, forecast] = await Promise.all([
@@ -219,7 +221,7 @@ export default function WeatherWidget() {
 
         setWeatherState({
           status: 'error',
-          message: 'Weather unavailable',
+          message: 'Chưa tải được thời tiết',
         })
       }
     }
@@ -232,7 +234,7 @@ export default function WeatherWidget() {
   if (weatherState.status === 'loading') {
     return (
       <div className="flex items-center gap-3 rounded-md border border-white/40 bg-white/75 px-3 py-2 text-sm font-medium text-stone-700 shadow-sm">
-        <span>Weather loading...</span>
+        <span>Đang tải thời tiết...</span>
       </div>
     )
   }
@@ -282,7 +284,7 @@ export default function WeatherWidget() {
             <div className="flex items-start justify-between gap-4">
               <div>
                 <h2 className="font-serif text-2xl font-bold text-stone-950" id="forecast-title">
-                  Forecast
+                  Dự báo thời tiết
                 </h2>
                 <p className="mt-1 text-sm text-stone-600">{weatherState.locationLabel}</p>
               </div>
@@ -291,7 +293,7 @@ export default function WeatherWidget() {
                 onClick={() => setIsForecastOpen(false)}
                 className="rounded-md border border-stone-200 bg-white px-3 py-1 text-sm font-semibold text-stone-700 transition hover:bg-stone-100"
               >
-                Close
+                Đóng
               </button>
             </div>
 
@@ -318,7 +320,7 @@ export default function WeatherWidget() {
                 ))
               ) : (
                 <p className="rounded-md border border-stone-200 bg-white/75 p-3 text-sm text-stone-600">
-                  Forecast data is not available right now.
+                  Hiện chưa có dữ liệu dự báo.
                 </p>
               )}
             </div>

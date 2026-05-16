@@ -7,10 +7,10 @@ export default function CafeFooter() {
       <div className="mx-auto grid max-w-6xl gap-8 border-t border-stone-200 pt-10 md:grid-cols-3 dark:border-stone-700">
         <div>
           <h2 className="font-serif text-2xl font-bold text-stone-950 dark:text-stone-100">
-            Hearth & Bean
+            Góc Cà Phê
           </h2>
           <p className="mt-3 max-w-sm text-stone-600 dark:text-stone-300">
-            42 Nguyen Hue, Ben Nghe, District 1, Ho Chi Minh City
+            42 Nguyễn Huệ, phường Bến Nghé, Quận 1, TP. Hồ Chí Minh
             <br />
             hello@hearthandbean.vn
             <br />
@@ -19,16 +19,16 @@ export default function CafeFooter() {
         </div>
 
         <div>
-          <h3 className="font-bold text-stone-950 dark:text-stone-100">Hours</h3>
+          <h3 className="font-bold text-stone-950 dark:text-stone-100">Giờ mở cửa</h3>
           <p className="mt-3 text-stone-600 dark:text-stone-300">
-            Mon-Fri: 7:00 AM - 6:00 PM
+            Thứ 2 - Thứ 6: 7:00 - 18:00
             <br />
-            Sat-Sun: 8:00 AM - 5:00 PM
+            Thứ 7 - Chủ nhật: 8:00 - 17:00
           </p>
         </div>
 
         <div>
-          <h3 className="font-bold text-stone-950 dark:text-stone-100">Social</h3>
+          <h3 className="font-bold text-stone-950 dark:text-stone-100">Mạng xã hội</h3>
           <div className="mt-3 flex gap-4">
             <a
               className="font-semibold text-stone-600 hover:text-stone-950 dark:text-stone-300 dark:hover:text-white"

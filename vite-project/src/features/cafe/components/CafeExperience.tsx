@@ -2,13 +2,6 @@ import { useMemo, useState } from 'react'
 import { type CafeLocation, defaultCafeLocation } from '../cafeLocation'
 import { useCafeLocation } from '../useCafeLocation'
 
-type FlavorSegment = {
-  name: string
-  color: string
-  notes: string[]
-  beans: string[]
-}
-
 type CoffeeShop = {
   name: string
   locationId: string
@@ -23,56 +16,55 @@ type ChartDatum = {
   detail: string
 }
 
-const flavorSegments: FlavorSegment[] = [
+const vietnamCoffeeBrands: ChartDatum[] = [
   {
-    name: 'Acidic',
-    color: '#f97316',
-    notes: ['Citrus', 'Green apple', 'Tamarind'],
-    beans: ['Kenya AA', 'Ethiopia Yirgacheffe'],
+    label: 'Highlands Coffee',
+    value: 95,
+    detail:
+      'Chuỗi cà phê Việt Nam lớn, nổi bật với cà phê sữa đá, đồ uống kiểu phin và độ phủ rộng ở nhiều đô thị.',
   },
   {
-    name: 'Sweet',
-    color: '#f59e0b',
-    notes: ['Honey', 'Caramel', 'Brown sugar'],
-    beans: ['Colombia Huila', 'Brazil Cerrado'],
+    label: 'Trung Nguyen Legend',
+    value: 88,
+    detail:
+      'Thương hiệu cà phê Việt Nam lâu đời với cà phê rang, G7 và hệ thống không gian cà phê.',
   },
   {
-    name: 'Bitter',
-    color: '#7c2d12',
-    notes: ['Cacao nibs', 'Walnut', 'Dark chocolate'],
-    beans: ['Sumatra Mandheling', 'Vietnam Robusta'],
+    label: 'Phuc Long',
+    value: 78,
+    detail: 'Thương hiệu trà và cà phê quen thuộc, có độ nhận diện cao tại các thành phố lớn.',
   },
   {
-    name: 'Floral',
-    color: '#db2777',
-    notes: ['Jasmine', 'Rose', 'Elderflower'],
-    beans: ['Panama Geisha', 'Ethiopia Sidamo'],
+    label: 'The Coffee House',
+    value: 72,
+    detail:
+      'Chuỗi nội địa hiện đại, tập trung vào không gian ngồi thoải mái, đặt món qua app và đồ uống hằng ngày.',
   },
   {
-    name: 'Fruity',
-    color: '#dc2626',
-    notes: ['Berry', 'Stone fruit', 'Grape'],
-    beans: ['Natural Ethiopia', 'Costa Rica Tarrazu'],
+    label: 'Cong Ca Phe',
+    value: 66,
+    detail:
+      'Thương hiệu cà phê mang màu sắc hoài niệm Việt Nam, nổi tiếng với cà phê cốt dừa và không gian xanh lính.',
   },
   {
-    name: 'Nutty',
-    color: '#92400e',
-    notes: ['Almond', 'Hazelnut', 'Peanut butter'],
-    beans: ['Brazil Santos', 'Guatemala Antigua'],
+    label: 'Katinat',
+    value: 61,
+    detail:
+      'Chuỗi đồ uống xuất phát từ Sài Gòn, tăng trưởng nhanh và được nhiều khách trẻ yêu thích.',
   },
 ]
 
 const presetLocations: CafeLocation[] = [
   {
     id: 'hcm-city',
-    label: 'HCM City',
+    label: 'TP. Hồ Chí Minh',
     lat: 10.8231,
     lon: 106.6297,
     source: 'preset',
   },
   {
     id: 'hn-city',
-    label: 'HN City',
+    label: 'Hà Nội',
     lat: 21.0278,
     lon: 105.8342,
     source: 'preset',
@@ -80,14 +72,14 @@ const presetLocations: CafeLocation[] = [
   defaultCafeLocation,
   {
     id: 'hue-city',
-    label: 'Hue City',
+    label: 'Huế',
     lat: 16.4637,
     lon: 107.5909,
     source: 'preset',
   },
   {
     id: 'quang-ninh-city',
-    label: 'Quang Ninh City',
+    label: 'Quảng Ninh',
     lat: 20.9712,
     lon: 107.0448,
     source: 'preset',
@@ -95,109 +87,93 @@ const presetLocations: CafeLocation[] = [
 ]
 
 const shopTemplates = [
-  { name: 'Arabica Atelier', bean: 'Arabica' as const, latOffset: 0.018, lonOffset: -0.014 },
-  { name: 'Robusta Works', bean: 'Robusta' as const, latOffset: -0.016, lonOffset: 0.018 },
-  { name: 'Blend Society', bean: 'Blend' as const, latOffset: 0.011, lonOffset: 0.021 },
+  { name: 'Xưởng Arabica', bean: 'Arabica' as const, latOffset: 0.018, lonOffset: -0.014 },
+  { name: 'Góc Robusta', bean: 'Robusta' as const, latOffset: -0.016, lonOffset: 0.018 },
+  { name: 'Nhà Blend', bean: 'Blend' as const, latOffset: 0.011, lonOffset: 0.021 },
 ]
 
 const coffeeConsumptionData: ChartDatum[] = [
-  { label: 'Robusta', value: 62, detail: 'Bold body, phin coffee, milk coffee' },
-  { label: 'Arabica', value: 23, detail: 'Da Lat specialty, filter brews' },
-  { label: 'Blend', value: 15, detail: 'Balanced daily cafe recipes' },
+  { label: 'Robusta', value: 62, detail: 'Đậm vị, hợp cà phê phin và cà phê sữa' },
+  { label: 'Arabica', value: 23, detail: 'Hạt Đà Lạt, hợp các kiểu pha nhẹ và sạch vị' },
+  { label: 'Blend', value: 15, detail: 'Công thức phối trộn cân bằng cho menu hằng ngày' },
 ]
 
 const popularVietnamCoffeeData: ChartDatum[] = [
-  { label: 'Ca phe sua da', value: 92, detail: 'Iconic iced condensed milk coffee' },
-  { label: 'Bac xiu', value: 78, detail: 'Milk-forward Saigon favorite' },
-  { label: 'Ca phe den da', value: 71, detail: 'Strong black iced robusta' },
-  { label: 'Ca phe trung', value: 58, detail: 'Creamy Hanoi egg coffee' },
+  { label: 'Cà phê sữa đá', value: 92, detail: 'Món cà phê sữa đặc có đá mang tính biểu tượng' },
+  { label: 'Bạc xỉu', value: 78, detail: 'Món kiểu Sài Gòn nhiều sữa, nhẹ vị cà phê' },
+  { label: 'Cà phê đen đá', value: 71, detail: 'Robusta đá đậm, gọn và tỉnh táo' },
+  { label: 'Cà phê trứng', value: 58, detail: 'Cà phê trứng Hà Nội béo mịn' },
 ]
 
-function describeSlice(index: number, total: number, innerRadius: number, outerRadius: number) {
-  const center = 120
-  const startAngle = (index / total) * Math.PI * 2 - Math.PI / 2
-  const endAngle = ((index + 1) / total) * Math.PI * 2 - Math.PI / 2
-  const largeArc = endAngle - startAngle > Math.PI ? 1 : 0
+const beanFilterLabels = {
+  All: 'Tất cả',
+  Arabica: 'Arabica',
+  Robusta: 'Robusta',
+  Blend: 'Blend',
+} as const
 
-  const outerStart = {
-    x: center + outerRadius * Math.cos(startAngle),
-    y: center + outerRadius * Math.sin(startAngle),
-  }
-  const outerEnd = {
-    x: center + outerRadius * Math.cos(endAngle),
-    y: center + outerRadius * Math.sin(endAngle),
-  }
-  const innerEnd = {
-    x: center + innerRadius * Math.cos(endAngle),
-    y: center + innerRadius * Math.sin(endAngle),
-  }
-  const innerStart = {
-    x: center + innerRadius * Math.cos(startAngle),
-    y: center + innerRadius * Math.sin(startAngle),
-  }
-
-  return [
-    `M ${outerStart.x} ${outerStart.y}`,
-    `A ${outerRadius} ${outerRadius} 0 ${largeArc} 1 ${outerEnd.x} ${outerEnd.y}`,
-    `L ${innerEnd.x} ${innerEnd.y}`,
-    `A ${innerRadius} ${innerRadius} 0 ${largeArc} 0 ${innerStart.x} ${innerStart.y}`,
-    'Z',
-  ].join(' ')
-}
-
-function FlavorWheel() {
-  const [selectedFlavor, setSelectedFlavor] = useState(flavorSegments[0])
+function BrandLeaderboard() {
+  const [selectedBrand, setSelectedBrand] = useState(vietnamCoffeeBrands[0])
+  const maxValue = Math.max(...vietnamCoffeeBrands.map((brand) => brand.value))
 
   return (
     <article className="rounded-md border border-stone-200 bg-white p-5 shadow-sm dark:border-stone-700 dark:bg-stone-900">
-      <div className="grid gap-6 md:grid-cols-[260px_1fr] md:items-center">
-        <svg
-          className="mx-auto size-60"
-          viewBox="0 0 240 240"
-          role="img"
-          aria-label="Coffee flavor wheel"
-        >
-          {flavorSegments.map((segment, index) => (
-            <path
-              className="cursor-pointer stroke-white stroke-[3] transition hover:brightness-110"
-              d={describeSlice(index, flavorSegments.length, 44, 108)}
-              fill={segment.color}
-              key={segment.name}
-              onClick={() => setSelectedFlavor(segment)}
-            />
-          ))}
-          <circle cx="120" cy="120" r="38" className="fill-white dark:fill-stone-950" />
-          <text
-            className="fill-stone-950 text-[13px] font-bold dark:fill-stone-100"
-            textAnchor="middle"
-            x="120"
-            y="124"
-          >
-            Flavor
-          </text>
-        </svg>
-
+      <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
         <div>
           <p className="text-sm font-bold uppercase tracking-[0.18em] text-amber-700 dark:text-amber-300">
-            Coffee Flavor Wheel
+            Thương hiệu cà phê Việt Nam
           </p>
-          <h3 className="mt-2 font-serif text-3xl font-bold">{selectedFlavor.name}</h3>
-          <div className="mt-4 grid gap-4 sm:grid-cols-2">
-            <div>
-              <p className="font-semibold">Notes</p>
-              <ul className="mt-2 space-y-1 text-sm text-stone-600 dark:text-stone-300">
-                {selectedFlavor.notes.map((note) => (
-                  <li key={note}>{note}</li>
-                ))}
-              </ul>
+          <h3 className="mt-2 font-serif text-3xl font-bold">Những cái tên nổi bật</h3>
+          <p className="mt-3 text-sm leading-6 text-stone-600 dark:text-stone-300">
+            Một góc nhìn dễ nhận biết hơn về các thương hiệu và chuỗi cà phê lớn tại Việt Nam.
+          </p>
+          <div className="mt-5 space-y-3">
+            {vietnamCoffeeBrands.map((brand) => (
+              <button
+                className={`w-full rounded-md border p-3 text-left transition ${
+                  selectedBrand.label === brand.label
+                    ? 'border-amber-400 bg-amber-50 dark:border-amber-300 dark:bg-stone-800'
+                    : 'border-stone-200 bg-stone-50 hover:border-amber-300 dark:border-stone-700 dark:bg-stone-950'
+                }`}
+                key={brand.label}
+                onClick={() => setSelectedBrand(brand)}
+                type="button"
+              >
+                <div className="flex items-center justify-between gap-3 text-sm">
+                  <span className="font-semibold">{brand.label}</span>
+                  <span className="font-bold text-amber-700 dark:text-amber-300">
+                    {brand.value}
+                  </span>
+                </div>
+                <div className="mt-2 h-2 overflow-hidden rounded-full bg-stone-200 dark:bg-stone-700">
+                  <div
+                    className="h-full rounded-full bg-amber-500"
+                    style={{ width: `${(brand.value / maxValue) * 100}%` }}
+                  />
+                </div>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="rounded-md bg-stone-950 p-5 text-white dark:bg-amber-300 dark:text-stone-950">
+          <p className="text-sm font-bold uppercase tracking-[0.18em] opacity-75">
+            Thương hiệu đang chọn
+          </p>
+          <h4 className="mt-2 font-serif text-3xl font-bold">{selectedBrand.label}</h4>
+          <p className="mt-4 leading-7">{selectedBrand.detail}</p>
+          <div className="mt-5 grid grid-cols-3 gap-2 text-center text-sm">
+            <div className="rounded-md bg-white/10 p-3 dark:bg-stone-950/10">
+              <p className="text-2xl font-bold">{selectedBrand.value}</p>
+              <p className="opacity-75">Chỉ số</p>
             </div>
-            <div>
-              <p className="font-semibold">Bean suggestions</p>
-              <ul className="mt-2 space-y-1 text-sm text-stone-600 dark:text-stone-300">
-                {selectedFlavor.beans.map((bean) => (
-                  <li key={bean}>{bean}</li>
-                ))}
-              </ul>
+            <div className="rounded-md bg-white/10 p-3 dark:bg-stone-950/10">
+              <p className="text-2xl font-bold">VN</p>
+              <p className="opacity-75">Thị trường</p>
+            </div>
+            <div className="rounded-md bg-white/10 p-3 dark:bg-stone-950/10">
+              <p className="text-2xl font-bold">Cafe</p>
+              <p className="opacity-75">Nhóm</p>
             </div>
           </div>
         </div>
@@ -273,7 +249,7 @@ function CoffeeMap() {
   const { currentLocation } = useCafeLocation()
   const [selectedLocationId, setSelectedLocationId] = useState<string | null>(null)
   const [query, setQuery] = useState('')
-  const [beanFilter, setBeanFilter] = useState('All')
+  const [beanFilter, setBeanFilter] = useState<keyof typeof beanFilterLabels>('All')
   const cityOptions = useMemo(() => {
     const hasDetectedLocation = currentLocation.source === 'detected'
     return hasDetectedLocation ? [currentLocation, ...presetLocations] : presetLocations
@@ -290,12 +266,12 @@ function CoffeeMap() {
   return (
     <article className="rounded-md border border-stone-200 bg-white p-5 shadow-sm dark:border-stone-700 dark:bg-stone-900">
       <p className="text-sm font-bold uppercase tracking-[0.18em] text-amber-700 dark:text-amber-300">
-        Specialty Map
+        Bản đồ cà phê đặc sản
       </p>
-      <h3 className="mt-2 font-serif text-3xl font-bold">Coffee near you</h3>
+      <h3 className="mt-2 font-serif text-3xl font-bold">Cà phê gần bạn</h3>
       <p className="mt-2 text-sm text-stone-600 dark:text-stone-300">
-        Default map follows the location allowed in the weather widget. Pick a city to explore
-        sample specialty coffee spots by bean type.
+        Bản đồ mặc định đi theo vị trí bạn cho phép ở widget thời tiết. Chọn một thành phố để xem
+        các điểm cà phê mẫu theo loại hạt.
       </p>
       <div className="mt-5 grid gap-5 lg:grid-cols-[1.1fr_0.9fr]">
         <div className="overflow-hidden rounded-md border border-stone-200 bg-stone-100 dark:border-stone-700 dark:bg-stone-950">
@@ -304,7 +280,7 @@ function CoffeeMap() {
             loading="lazy"
             referrerPolicy="no-referrer-when-downgrade"
             src={getMapEmbedUrl(selectedLocation)}
-            title={`OpenStreetMap for ${selectedLocation.label}`}
+            title={`Bản đồ OpenStreetMap cho ${selectedLocation.label}`}
           />
         </div>
         <div>
@@ -327,11 +303,11 @@ function CoffeeMap() {
           <input
             className="w-full rounded-md border border-stone-200 bg-white px-3 py-2 text-sm text-stone-950"
             onChange={(event) => setQuery(event.target.value)}
-            placeholder="Search coffee shops"
+            placeholder="Tìm quán cà phê"
             value={query}
           />
           <div className="mt-3 flex flex-wrap gap-2">
-            {['All', 'Arabica', 'Robusta', 'Blend'].map((bean) => (
+            {Object.keys(beanFilterLabels).map((bean) => (
               <button
                 className={`rounded-md px-3 py-2 text-sm font-semibold transition ${
                   beanFilter === bean
@@ -339,10 +315,10 @@ function CoffeeMap() {
                     : 'bg-stone-100 text-stone-700 dark:bg-stone-800 dark:text-stone-200'
                 }`}
                 key={bean}
-                onClick={() => setBeanFilter(bean)}
+                onClick={() => setBeanFilter(bean as keyof typeof beanFilterLabels)}
                 type="button"
               >
-                {bean}
+                {beanFilterLabels[bean as keyof typeof beanFilterLabels]}
               </button>
             ))}
           </div>
@@ -375,32 +351,32 @@ export default function CafeExperience() {
         <div className="mb-10 max-w-3xl">
           <div className="max-w-2xl">
             <p className="text-sm font-bold uppercase tracking-[0.2em] text-amber-700 dark:text-amber-300">
-              Vietnam coffee insights
+              Góc nhìn cà phê Việt Nam
             </p>
             <h2 className="mt-3 font-serif text-4xl font-bold sm:text-5xl">
-              What Vietnam drinks most
+              Người Việt uống gì nhiều nhất
             </h2>
             <p className="mt-4 text-stone-600 dark:text-stone-300">
-              Compare the beans behind daily cafe culture and the drinks people come back for across
-              Vietnam.
+              So sánh các loại hạt đứng sau văn hóa cà phê hằng ngày và những món được yêu thích ở
+              Việt Nam.
             </p>
           </div>
         </div>
 
         <div className="grid gap-6">
-          <FlavorWheel />
+          <BrandLeaderboard />
           <div className="grid gap-6 lg:grid-cols-2">
             <HorizontalBarChart
               data={coffeeConsumptionData}
-              description="A simplified view of how common bean categories show up in Vietnamese cafe menus."
-              eyebrow="Consumption mix"
-              title="Popular coffee types"
+              description="Góc nhìn đơn giản về cách các nhóm hạt phổ biến xuất hiện trong menu cà phê Việt Nam."
+              eyebrow="Tỷ trọng tiêu thụ"
+              title="Loại hạt phổ biến"
             />
             <HorizontalBarChart
               data={popularVietnamCoffeeData}
-              description="A simple popularity snapshot of familiar Vietnamese coffee orders."
-              eyebrow="Most ordered"
-              title="Favorite drinks in Vietnam"
+              description="Một lát cắt đơn giản về những món cà phê Việt quen thuộc được gọi nhiều."
+              eyebrow="Món được gọi nhiều"
+              title="Đồ uống được ưa chuộng"
             />
           </div>
           <CoffeeMap />

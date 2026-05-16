@@ -1,29 +1,28 @@
 const menuItems = [
   {
-    name: 'Ca Phe Sua Da',
-    description: 'Vietnamese robusta pulled strong over condensed milk and served over ice.',
+    name: 'Cà phê sữa đá',
+    description: 'Robusta Việt Nam pha đậm, hòa cùng sữa đặc và phục vụ trên đá.',
     price: '45.000 VND',
     image:
       'https://images.unsplash.com/photo-1745210358756-e7f7ff40e506?auto=format&fit=crop&w=700&q=80',
   },
   {
-    name: 'Bac Xiu',
-    description: 'A softer Saigon-style milk coffee with light coffee aroma and creamy sweetness.',
+    name: 'Bạc xỉu',
+    description: 'Cà phê sữa kiểu Sài Gòn nhẹ vị cà phê, béo thơm và dễ uống.',
     price: '49.000 VND',
     image:
       'https://images.unsplash.com/photo-1745816743825-b1be5b23e528?auto=format&fit=crop&w=700&q=80',
   },
   {
-    name: 'Ca Phe Trung',
-    description: 'Hanoi egg coffee with whipped egg cream, cacao dust, and a rich robusta base.',
+    name: 'Cà phê trứng',
+    description: 'Cà phê trứng Hà Nội với lớp kem trứng mịn, cacao và nền robusta đậm.',
     price: '65.000 VND',
     image:
       'https://images.unsplash.com/photo-1760769214612-aff51cd270bd?auto=format&fit=crop&w=700&q=80',
   },
   {
-    name: 'Phin Arabica Da Lat',
-    description:
-      'Slow-dripped Da Lat arabica with citrus aroma, caramel sweetness, and a clean finish.',
+    name: 'Phin Arabica Đà Lạt',
+    description: 'Arabica Đà Lạt pha phin chậm, hương cam nhẹ, hậu vị caramel và sạch miệng.',
     price: '59.000 VND',
     image:
       'https://images.unsplash.com/photo-1660287987708-36a96179b6db?auto=format&fit=crop&w=700&q=80',
@@ -36,14 +35,14 @@ export default function FeaturedMenu() {
       <div className="mx-auto max-w-6xl">
         <div className="mb-10 max-w-2xl">
           <p className="text-sm font-bold uppercase tracking-[0.2em] text-amber-700 dark:text-amber-300">
-            Popular picks
+            Món được yêu thích
           </p>
           <h2 className="mt-3 font-serif text-4xl font-bold text-stone-950 sm:text-5xl dark:text-stone-100">
-            Vietnamese Coffee Menu
+            Menu cà phê Việt Nam
           </h2>
           <p className="mt-4 text-stone-600 dark:text-stone-300">
-            Familiar Vietnamese coffee signatures made with robusta, Da Lat arabica, condensed milk,
-            and phin-style extraction.
+            Những hương vị quen thuộc từ robusta Việt Nam, arabica Đà Lạt, sữa đặc và cách pha phin
+            truyền thống.
           </p>
         </div>
 

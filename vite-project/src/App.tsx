@@ -1,4 +1,5 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { useState } from 'react'
 import './App.css'
 // import Users from "./components/users";
 import {
@@ -9,6 +10,7 @@ import {
   HeroSection,
   Navbar,
 } from './features/cafe/components'
+import { CafeLocationProvider } from './features/cafe/CafeLocationProvider'
 // import { useBackendHealth } from "./hooks/useBackendHealth";
 
 const queryClient = new QueryClient()
@@ -57,6 +59,7 @@ const queryClient = new QueryClient()
 // }
 
 function AppContent() {
+  const [isDarkMode, setIsDarkMode] = useState(false)
   // const { isError, isFetching, isPending, refetch } = useBackendHealth();
 
   // if (isPending) {
@@ -84,17 +87,26 @@ function AppContent() {
   // }
 
   return (
-    <div className="min-h-svh bg-[#fbf7ef] text-stone-900">
-      <Navbar />
-      <main>
-        <HeroSection />
-        <FeaturedMenu />
-        <About />
-        <CafeExperience />
-        {/* <Users /> */}
-      </main>
-      <CafeFooter />
-    </div>
+    <CafeLocationProvider>
+      <div
+        className={`min-h-svh transition-colors ${
+          isDarkMode ? 'dark bg-stone-950 text-stone-100' : 'bg-[#fbf7ef] text-stone-900'
+        }`}
+      >
+        <Navbar
+          isDarkMode={isDarkMode}
+          onToggleTheme={() => setIsDarkMode((currentValue) => !currentValue)}
+        />
+        <main>
+          <HeroSection />
+          <FeaturedMenu />
+          <About />
+          <CafeExperience />
+          {/* <Users /> */}
+        </main>
+        <CafeFooter />
+      </div>
+    </CafeLocationProvider>
   )
 }
 

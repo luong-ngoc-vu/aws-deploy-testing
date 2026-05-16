@@ -34,13 +34,13 @@ export default function FeaturedMenu() {
     <section className="px-4 py-20 sm:px-6 lg:px-8" id="menu">
       <div className="mx-auto max-w-6xl">
         <div className="mb-10 max-w-2xl">
-          <p className="text-sm font-bold uppercase tracking-[0.2em] text-amber-700">
+          <p className="text-sm font-bold uppercase tracking-[0.2em] text-amber-700 dark:text-amber-300">
             Popular picks
           </p>
-          <h2 className="mt-3 font-serif text-4xl font-bold text-stone-950 sm:text-5xl">
+          <h2 className="mt-3 font-serif text-4xl font-bold text-stone-950 sm:text-5xl dark:text-stone-100">
             Featured Menu
           </h2>
-          <p className="mt-4 text-stone-600">
+          <p className="mt-4 text-stone-600 dark:text-stone-300">
             House favorites for coffee breaks, working afternoons, and weekend catch-ups.
           </p>
         </div>
@@ -48,7 +48,7 @@ export default function FeaturedMenu() {
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {menuItems.map((item) => (
             <article
-              className="overflow-hidden rounded-md border border-stone-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-xl"
+              className="overflow-hidden rounded-md border border-stone-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-xl dark:border-stone-700 dark:bg-stone-900"
               key={item.name}
             >
               <img
@@ -59,12 +59,16 @@ export default function FeaturedMenu() {
               />
               <div className="space-y-3 p-5">
                 <div className="flex items-start justify-between gap-4">
-                  <h3 className="font-serif text-xl font-bold text-stone-950">{item.name}</h3>
+                  <h3 className="font-serif text-xl font-bold text-stone-950 dark:text-stone-100">
+                    {item.name}
+                  </h3>
                   <span className="rounded-md bg-amber-100 px-2 py-1 text-sm font-bold text-amber-900">
                     {item.price}
                   </span>
                 </div>
-                <p className="text-sm leading-6 text-stone-600">{item.description}</p>
+                <p className="text-sm leading-6 text-stone-600 dark:text-stone-300">
+                  {item.description}
+                </p>
               </div>
             </article>
           ))}

@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { useEffect, useState } from 'react'
+import { useCafeLocation } from '../useCafeLocation'
 
 const DEFAULT_CITY = 'Da Nang,VN'
 const DISPLAY_LOCATION = 'Da Nang, VN'
@@ -146,7 +147,18 @@ function getLocationLabel(data: WeatherData, isDetectedLocation: boolean) {
   return city || 'Current location'
 }
 
+function getDetectedLocation(data: WeatherData, coordinates: GeolocationCoordinates) {
+  return {
+    id: 'current-location',
+    label: getLocationLabel(data, true),
+    lat: coordinates.latitude,
+    lon: coordinates.longitude,
+    source: 'detected' as const,
+  }
+}
+
 export default function WeatherWidget() {
+  const { setCurrentLocation } = useCafeLocation()
   const [weatherState, setWeatherState] = useState<WeatherState>(
     openWeatherApiKey
       ? { status: 'loading' }
@@ -198,6 +210,10 @@ export default function WeatherWidget() {
           fetchedAt: Math.floor(Date.now() / 1000),
           locationLabel: getLocationLabel(current.data, Boolean(coordinates)),
         })
+
+        if (coordinates) {
+          setCurrentLocation(getDetectedLocation(current.data, coordinates))
+        }
       } catch (error) {
         if (axios.isCancel(error)) return
 
@@ -211,7 +227,7 @@ export default function WeatherWidget() {
     void fetchWeather()
 
     return () => controller.abort()
-  }, [])
+  }, [setCurrentLocation])
 
   if (weatherState.status === 'loading') {
     return (
@@ -237,14 +253,18 @@ export default function WeatherWidget() {
       <button
         type="button"
         onClick={() => setIsForecastOpen(true)}
-        className="flex flex-wrap items-center gap-x-4 gap-y-1 rounded-md border border-white/40 bg-white/80 px-3 py-2 text-left text-sm shadow-sm transition hover:border-amber-300 hover:bg-white"
+        className="flex flex-wrap items-center gap-x-4 gap-y-1 rounded-md border border-white/40 bg-white/80 px-3 py-2 text-left text-sm shadow-sm transition hover:border-amber-300 hover:bg-white dark:border-stone-700 dark:bg-stone-900 dark:hover:bg-stone-800"
         aria-haspopup="dialog"
       >
-        <span className="font-semibold text-stone-900">{weatherState.locationLabel}</span>
-        <span className="font-bold text-stone-950">
+        <span className="font-semibold text-stone-900 dark:text-stone-100">
+          {weatherState.locationLabel}
+        </span>
+        <span className="font-bold text-stone-950 dark:text-stone-100">
           {Math.round(weatherState.current.main.temp)}°C
         </span>
-        <span className="capitalize text-stone-600">{currentWeather.description}</span>
+        <span className="capitalize text-stone-600 dark:text-stone-300">
+          {currentWeather.description}
+        </span>
       </button>
 
       {isForecastOpen && (

@@ -10,11 +10,11 @@ export default function CafeFooter() {
             Hearth & Bean
           </h2>
           <p className="mt-3 max-w-sm text-stone-600 dark:text-stone-300">
-            214 Maple Street, Seattle, WA
+            42 Nguyen Hue, Ben Nghe, District 1, Ho Chi Minh City
             <br />
-            hello@hearthandbean.example
+            hello@hearthandbean.vn
             <br />
-            (206) 555-0184
+            +84 28 3822 1845
           </p>
         </div>
 

@@ -71,18 +71,54 @@ export default function Navbar({ isDarkMode, onToggleTheme }: NavbarProps) {
         <div className="flex flex-wrap items-center justify-end gap-3">
           <time
             dateTime={currentTime.iso}
-            className="rounded-md border border-stone-200 bg-white/75 px-3 py-2 text-sm font-semibold text-stone-700 shadow-sm dark:border-stone-700 dark:bg-stone-900 dark:text-stone-100"
+            className="min-w-[240px] rounded-md border border-stone-200 bg-white/75 px-3 py-2 text-center text-sm font-semibold tabular-nums text-stone-700 shadow-sm dark:border-stone-700 dark:bg-stone-900 dark:text-stone-100"
           >
             {currentTime.display}
           </time>
+          <WeatherWidget />
           <button
-            className="rounded-md border border-stone-200 bg-white/75 px-3 py-2 text-sm font-bold text-stone-700 shadow-sm transition hover:bg-white dark:border-stone-700 dark:bg-stone-900 dark:text-stone-100 dark:hover:bg-stone-800"
+            aria-label={isDarkMode ? 'Switch to light mode' : 'Switch to dark mode'}
+            className="grid size-10 place-items-center rounded-md border border-stone-200 bg-white/75 text-stone-700 shadow-sm transition hover:bg-white dark:border-stone-700 dark:bg-stone-900 dark:text-stone-100 dark:hover:bg-stone-800"
             onClick={onToggleTheme}
+            title={isDarkMode ? 'Switch to light mode' : 'Switch to dark mode'}
             type="button"
           >
-            {isDarkMode ? 'Light' : 'Dark'}
+            {isDarkMode ? (
+              <svg
+                aria-hidden="true"
+                className="size-5"
+                fill="none"
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+              >
+                <circle cx="12" cy="12" r="4" />
+                <path d="M12 2v2" />
+                <path d="M12 20v2" />
+                <path d="m4.93 4.93 1.41 1.41" />
+                <path d="m17.66 17.66 1.41 1.41" />
+                <path d="M2 12h2" />
+                <path d="M20 12h2" />
+                <path d="m6.34 17.66-1.41 1.41" />
+                <path d="m19.07 4.93-1.41 1.41" />
+              </svg>
+            ) : (
+              <svg
+                aria-hidden="true"
+                className="size-5"
+                fill="none"
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+              >
+                <path d="M20.99 12.79A9 9 0 1 1 11.21 3.01 7 7 0 0 0 20.99 12.79Z" />
+              </svg>
+            )}
           </button>
-          <WeatherWidget />
         </div>
       </nav>
     </header>

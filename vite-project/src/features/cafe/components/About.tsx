@@ -5,8 +5,8 @@ export default function About() {
         <div className="overflow-hidden rounded-md">
           <img
             className="h-full min-h-80 w-full object-cover"
-            src="https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=1000&q=80"
-            alt="Warm cafe interior with tables and soft lighting"
+            src="https://images.unsplash.com/photo-1760084459386-f389fc684921?auto=format&fit=crop&w=1000&q=80"
+            alt="Cozy cafe interior in Ben Tre, Vietnam"
             loading="lazy"
           />
         </div>

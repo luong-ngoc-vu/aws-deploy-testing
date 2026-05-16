@@ -203,12 +203,12 @@ function BrewingCalculator() {
   return (
     <article className="rounded-md border border-stone-200 bg-white p-5 shadow-sm dark:border-stone-700 dark:bg-stone-900">
       <p className="text-sm font-bold uppercase tracking-[0.18em] text-amber-700 dark:text-amber-300">
-        Vietnamese brew guide
+        Make it your way
       </p>
-      <h3 className="mt-2 font-serif text-3xl font-bold">Water and coffee calculator</h3>
+      <h3 className="mt-2 font-serif text-3xl font-bold">Find your perfect brew ratio</h3>
       <p className="mt-3 text-sm leading-6 text-stone-600 dark:text-stone-300">
-        Start with a familiar Vietnamese specialty recipe: 20g coffee at 1:15 for filter brewers.
-        Increase coffee for a stronger phin-style cup or raise the ratio for a cleaner pour-over.
+        Inspired by the clear, action-first menu experience on Starbucks, this guide keeps the
+        recipe simple: choose coffee, choose strength, and see the water amount instantly.
       </p>
       <div className="mt-5 space-y-5">
         <label className="block">
@@ -241,8 +241,8 @@ function BrewingCalculator() {
           <p className="text-sm font-semibold">Water needed</p>
           <p className="text-4xl font-bold">{waterGrams}g</p>
           <p className="mt-2 text-sm">
-            Try this with Vietnamese Arabica from Da Lat, honey Robusta from Gia Lai, or a balanced
-            Arabica-Robusta blend from Cau Dat.
+            Try Da Lat arabica for a bright cup, Gia Lai robusta for bold body, or Cau Dat blend for
+            a balanced daily brew.
           </p>
         </div>
       </div>
@@ -514,14 +514,14 @@ export default function CafeExperience() {
         <div className="mb-10 max-w-3xl">
           <div className="max-w-2xl">
             <p className="text-sm font-bold uppercase tracking-[0.2em] text-amber-700 dark:text-amber-300">
-              Brew Vietnamese coffee better
+              Order, learn, brew
             </p>
             <h2 className="mt-3 font-serif text-4xl font-bold sm:text-5xl">
-              Practical tools for flavor, recipes, and local cafes
+              Coffee tools for every Vietnamese cup
             </h2>
             <p className="mt-4 text-stone-600 dark:text-stone-300">
-              Explore flavor notes, calculate a simple brew recipe, log tasting notes, and compare
-              specialty coffee options across Vietnam's major coffee cities.
+              Explore signature flavors, tune your recipe, record tasting notes, and find local
+              coffee spots in one clean workspace.
             </p>
           </div>
         </div>

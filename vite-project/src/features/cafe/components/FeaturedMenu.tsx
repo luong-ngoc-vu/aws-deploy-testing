@@ -1,31 +1,32 @@
 const menuItems = [
   {
-    name: 'Honey Oat Latte',
-    description: 'Double espresso, steamed oat milk, wildflower honey, and cinnamon.',
-    price: '$5.75',
+    name: 'Ca Phe Sua Da',
+    description: 'Vietnamese robusta pulled strong over condensed milk and served over ice.',
+    price: '45.000 VND',
     image:
-      'https://images.unsplash.com/photo-1517701604599-bb29b565090c?auto=format&fit=crop&w=700&q=80',
+      'https://images.unsplash.com/photo-1745210358756-e7f7ff40e506?auto=format&fit=crop&w=700&q=80',
   },
   {
-    name: 'Maple Cardamom Cappuccino',
-    description: 'A creamy cappuccino finished with maple and a soft spice blend.',
-    price: '$5.25',
+    name: 'Bac Xiu',
+    description: 'A softer Saigon-style milk coffee with light coffee aroma and creamy sweetness.',
+    price: '49.000 VND',
     image:
-      'https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=700&q=80',
+      'https://images.unsplash.com/photo-1745816743825-b1be5b23e528?auto=format&fit=crop&w=700&q=80',
   },
   {
-    name: 'Almond Croissant',
-    description: 'Buttery layers filled with almond cream and toasted sliced almonds.',
-    price: '$4.95',
+    name: 'Ca Phe Trung',
+    description: 'Hanoi egg coffee with whipped egg cream, cacao dust, and a rich robusta base.',
+    price: '65.000 VND',
     image:
-      'https://images.unsplash.com/photo-1623334044303-241021148842?auto=format&fit=crop&w=700&q=80',
+      'https://images.unsplash.com/photo-1760769214612-aff51cd270bd?auto=format&fit=crop&w=700&q=80',
   },
   {
-    name: 'Berry Morning Tart',
-    description: 'Vanilla custard, market berries, and crisp pastry with lemon zest.',
-    price: '$6.25',
+    name: 'Phin Arabica Da Lat',
+    description:
+      'Slow-dripped Da Lat arabica with citrus aroma, caramel sweetness, and a clean finish.',
+    price: '59.000 VND',
     image:
-      'https://images.unsplash.com/photo-1464305795204-6f5bbfc7fb81?auto=format&fit=crop&w=700&q=80',
+      'https://images.unsplash.com/photo-1660287987708-36a96179b6db?auto=format&fit=crop&w=700&q=80',
   },
 ]
 
@@ -38,10 +39,11 @@ export default function FeaturedMenu() {
             Popular picks
           </p>
           <h2 className="mt-3 font-serif text-4xl font-bold text-stone-950 sm:text-5xl dark:text-stone-100">
-            Featured Menu
+            Vietnamese Coffee Menu
           </h2>
           <p className="mt-4 text-stone-600 dark:text-stone-300">
-            House favorites for coffee breaks, working afternoons, and weekend catch-ups.
+            Familiar Vietnamese coffee signatures made with robusta, Da Lat arabica, condensed milk,
+            and phin-style extraction.
           </p>
         </div>
 

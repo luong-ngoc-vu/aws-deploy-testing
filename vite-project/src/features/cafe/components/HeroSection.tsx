@@ -5,7 +5,7 @@ export default function HeroSection() {
         className="absolute inset-0 -z-10 bg-cover bg-center"
         style={{
           backgroundImage:
-            "linear-gradient(90deg, rgba(28, 20, 14, 0.82), rgba(28, 20, 14, 0.42)), url('https://images.unsplash.com/photo-1764745020861-92090449e27b?auto=format&fit=crop&w=1800&q=80')",
+            "linear-gradient(90deg, rgba(28, 20, 14, 0.82), rgba(28, 20, 14, 0.42)), url('https://images.unsplash.com/photo-1760084459386-f389fc684921?auto=format&fit=crop&w=1800&q=80')",
         }}
       />
       <div className="mx-auto flex min-h-[calc(100svh-73px)] max-w-6xl items-center px-4 py-20 sm:px-6 lg:px-8">

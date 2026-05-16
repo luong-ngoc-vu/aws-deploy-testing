@@ -5,8 +5,8 @@ export default function About() {
         <div className="overflow-hidden rounded-md">
           <img
             className="h-full min-h-80 w-full object-cover"
-            src="https://images.unsplash.com/photo-1760084459386-f389fc684921?auto=format&fit=crop&w=1000&q=80"
-            alt="Cozy cafe interior in Ben Tre, Vietnam"
+            src="https://images.unsplash.com/photo-1745210358756-e7f7ff40e506?auto=format&fit=crop&w=1000&q=80"
+            alt="Vietnamese coffee brewing in a phin filter"
             loading="lazy"
           />
         </div>

@@ -1,4 +1,4 @@
-import { type FormEvent, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { type CafeLocation, defaultCafeLocation } from '../cafeLocation'
 import { useCafeLocation } from '../useCafeLocation'
 
@@ -9,20 +9,18 @@ type FlavorSegment = {
   beans: string[]
 }
 
-type JournalEntry = {
-  id: number
-  origin: string
-  process: string
-  roast: string
-  rating: number
-}
-
 type CoffeeShop = {
   name: string
   locationId: string
   bean: 'Arabica' | 'Robusta' | 'Blend'
   lat: number
   lon: number
+}
+
+type ChartDatum = {
+  label: string
+  value: number
+  detail: string
 }
 
 const flavorSegments: FlavorSegment[] = [
@@ -100,6 +98,19 @@ const shopTemplates = [
   { name: 'Arabica Atelier', bean: 'Arabica' as const, latOffset: 0.018, lonOffset: -0.014 },
   { name: 'Robusta Works', bean: 'Robusta' as const, latOffset: -0.016, lonOffset: 0.018 },
   { name: 'Blend Society', bean: 'Blend' as const, latOffset: 0.011, lonOffset: 0.021 },
+]
+
+const coffeeConsumptionData: ChartDatum[] = [
+  { label: 'Robusta', value: 62, detail: 'Bold body, phin coffee, milk coffee' },
+  { label: 'Arabica', value: 23, detail: 'Da Lat specialty, filter brews' },
+  { label: 'Blend', value: 15, detail: 'Balanced daily cafe recipes' },
+]
+
+const popularVietnamCoffeeData: ChartDatum[] = [
+  { label: 'Ca phe sua da', value: 92, detail: 'Iconic iced condensed milk coffee' },
+  { label: 'Bac xiu', value: 78, detail: 'Milk-forward Saigon favorite' },
+  { label: 'Ca phe den da', value: 71, detail: 'Strong black iced robusta' },
+  { label: 'Ca phe trung', value: 58, detail: 'Creamy Hanoi egg coffee' },
 ]
 
 function describeSlice(index: number, total: number, innerRadius: number, outerRadius: number) {
@@ -195,190 +206,40 @@ function FlavorWheel() {
   )
 }
 
-function BrewingCalculator() {
-  const [coffeeGrams, setCoffeeGrams] = useState(20)
-  const [ratio, setRatio] = useState(15)
-  const waterGrams = coffeeGrams * ratio
+function HorizontalBarChart({
+  title,
+  eyebrow,
+  description,
+  data,
+}: {
+  title: string
+  eyebrow: string
+  description: string
+  data: ChartDatum[]
+}) {
+  const maxValue = Math.max(...data.map((item) => item.value))
 
   return (
     <article className="rounded-md border border-stone-200 bg-white p-5 shadow-sm dark:border-stone-700 dark:bg-stone-900">
       <p className="text-sm font-bold uppercase tracking-[0.18em] text-amber-700 dark:text-amber-300">
-        Make it your way
+        {eyebrow}
       </p>
-      <h3 className="mt-2 font-serif text-3xl font-bold">Find your perfect brew ratio</h3>
-      <p className="mt-3 text-sm leading-6 text-stone-600 dark:text-stone-300">
-        Inspired by the clear, action-first menu experience on Starbucks, this guide keeps the
-        recipe simple: choose coffee, choose strength, and see the water amount instantly.
-      </p>
-      <div className="mt-5 space-y-5">
-        <label className="block">
-          <span className="flex justify-between text-sm font-semibold">
-            Coffee <span>{coffeeGrams}g</span>
-          </span>
-          <input
-            className="mt-2 w-full accent-amber-600"
-            max="60"
-            min="10"
-            onChange={(event) => setCoffeeGrams(Number(event.target.value))}
-            type="range"
-            value={coffeeGrams}
-          />
-        </label>
-        <label className="block">
-          <span className="flex justify-between text-sm font-semibold">
-            Ratio <span>1:{ratio}</span>
-          </span>
-          <input
-            className="mt-2 w-full accent-amber-600"
-            max="20"
-            min="12"
-            onChange={(event) => setRatio(Number(event.target.value))}
-            type="range"
-            value={ratio}
-          />
-        </label>
-        <div className="rounded-md bg-amber-100 p-4 text-stone-950">
-          <p className="text-sm font-semibold">Water needed</p>
-          <p className="text-4xl font-bold">{waterGrams}g</p>
-          <p className="mt-2 text-sm">
-            Try Da Lat arabica for a bright cup, Gia Lai robusta for bold body, or Cau Dat blend for
-            a balanced daily brew.
-          </p>
-        </div>
-      </div>
-    </article>
-  )
-}
-
-function TastingJournal() {
-  const [entries, setEntries] = useState<JournalEntry[]>([
-    { id: 1, origin: 'Ethiopia', process: 'Natural', roast: 'Light', rating: 92 },
-  ])
-  const [formValues, setFormValues] = useState({
-    origin: '',
-    process: 'Washed',
-    roast: 'Medium',
-    rating: 85,
-  })
-
-  const averageRating = useMemo(() => {
-    if (entries.length === 0) return 0
-    return Math.round(entries.reduce((total, entry) => total + entry.rating, 0) / entries.length)
-  }, [entries])
-
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-
-    if (!formValues.origin.trim()) {
-      return
-    }
-
-    setEntries((currentEntries) => [
-      {
-        id: Date.now(),
-        origin: formValues.origin.trim(),
-        process: formValues.process,
-        roast: formValues.roast,
-        rating: formValues.rating,
-      },
-      ...currentEntries,
-    ])
-    setFormValues((currentValues) => ({ ...currentValues, origin: '' }))
-  }
-
-  return (
-    <article className="rounded-md border border-stone-200 bg-white p-5 shadow-sm dark:border-stone-700 dark:bg-stone-900">
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <p className="text-sm font-bold uppercase tracking-[0.18em] text-amber-700 dark:text-amber-300">
-            Tasting Journal
-          </p>
-          <h3 className="mt-2 font-serif text-3xl font-bold">Recent cups</h3>
-        </div>
-        <div className="rounded-md bg-stone-950 px-3 py-2 text-center text-white dark:bg-amber-300 dark:text-stone-950">
-          <p className="text-xs font-semibold">Avg</p>
-          <p className="text-xl font-bold">{averageRating}</p>
-        </div>
-      </div>
-
-      <form className="mt-5 grid gap-3 sm:grid-cols-2" onSubmit={handleSubmit}>
-        <input
-          className="rounded-md border border-stone-200 bg-white px-3 py-2 text-sm text-stone-950"
-          onChange={(event) =>
-            setFormValues((currentValues) => ({
-              ...currentValues,
-              origin: event.target.value,
-            }))
-          }
-          placeholder="Origin"
-          value={formValues.origin}
-        />
-        <select
-          className="rounded-md border border-stone-200 bg-white px-3 py-2 text-sm text-stone-950"
-          onChange={(event) =>
-            setFormValues((currentValues) => ({
-              ...currentValues,
-              process: event.target.value,
-            }))
-          }
-          value={formValues.process}
-        >
-          <option>Washed</option>
-          <option>Natural</option>
-          <option>Honey</option>
-          <option>Anaerobic</option>
-        </select>
-        <select
-          className="rounded-md border border-stone-200 bg-white px-3 py-2 text-sm text-stone-950"
-          onChange={(event) =>
-            setFormValues((currentValues) => ({
-              ...currentValues,
-              roast: event.target.value,
-            }))
-          }
-          value={formValues.roast}
-        >
-          <option>Light</option>
-          <option>Medium</option>
-          <option>Dark</option>
-        </select>
-        <label className="rounded-md border border-stone-200 bg-white px-3 py-2 text-sm text-stone-950">
-          Rating {formValues.rating}
-          <input
-            className="mt-1 w-full accent-amber-600"
-            max="100"
-            min="60"
-            onChange={(event) =>
-              setFormValues((currentValues) => ({
-                ...currentValues,
-                rating: Number(event.target.value),
-              }))
-            }
-            type="range"
-            value={formValues.rating}
-          />
-        </label>
-        <button
-          className="rounded-md bg-amber-300 px-4 py-2 font-bold text-stone-950 transition hover:bg-amber-200 sm:col-span-2"
-          type="submit"
-        >
-          Add tasting note
-        </button>
-      </form>
-
-      <div className="mt-5 space-y-3">
-        {entries.map((entry) => (
-          <div
-            className="flex items-center justify-between gap-3 rounded-md border border-stone-200 bg-stone-50 p-3 text-sm dark:border-stone-700 dark:bg-stone-950"
-            key={entry.id}
-          >
-            <div>
-              <p className="font-semibold">{entry.origin}</p>
-              <p className="text-stone-600 dark:text-stone-300">
-                {entry.process} / {entry.roast}
-              </p>
+      <h3 className="mt-2 font-serif text-3xl font-bold">{title}</h3>
+      <p className="mt-3 text-sm leading-6 text-stone-600 dark:text-stone-300">{description}</p>
+      <div className="mt-5 space-y-4">
+        {data.map((item) => (
+          <div key={item.label}>
+            <div className="mb-2 flex items-center justify-between gap-3 text-sm">
+              <span className="font-semibold">{item.label}</span>
+              <span className="font-bold text-amber-700 dark:text-amber-300">{item.value}%</span>
             </div>
-            <span className="text-lg font-bold">{entry.rating}</span>
+            <div className="h-3 overflow-hidden rounded-full bg-stone-100 dark:bg-stone-800">
+              <div
+                className="h-full rounded-full bg-amber-500"
+                style={{ width: `${(item.value / maxValue) * 100}%` }}
+              />
+            </div>
+            <p className="mt-1 text-xs text-stone-500 dark:text-stone-400">{item.detail}</p>
           </div>
         ))}
       </div>
@@ -514,14 +375,14 @@ export default function CafeExperience() {
         <div className="mb-10 max-w-3xl">
           <div className="max-w-2xl">
             <p className="text-sm font-bold uppercase tracking-[0.2em] text-amber-700 dark:text-amber-300">
-              Order, learn, brew
+              Vietnam coffee insights
             </p>
             <h2 className="mt-3 font-serif text-4xl font-bold sm:text-5xl">
-              Coffee tools for every Vietnamese cup
+              What Vietnam drinks most
             </h2>
             <p className="mt-4 text-stone-600 dark:text-stone-300">
-              Explore signature flavors, tune your recipe, record tasting notes, and find local
-              coffee spots in one clean workspace.
+              Compare the beans behind daily cafe culture and the drinks people come back for across
+              Vietnam.
             </p>
           </div>
         </div>
@@ -529,8 +390,18 @@ export default function CafeExperience() {
         <div className="grid gap-6">
           <FlavorWheel />
           <div className="grid gap-6 lg:grid-cols-2">
-            <BrewingCalculator />
-            <TastingJournal />
+            <HorizontalBarChart
+              data={coffeeConsumptionData}
+              description="A simplified view of how common bean categories show up in Vietnamese cafe menus."
+              eyebrow="Consumption mix"
+              title="Popular coffee types"
+            />
+            <HorizontalBarChart
+              data={popularVietnamCoffeeData}
+              description="A simple popularity snapshot of familiar Vietnamese coffee orders."
+              eyebrow="Most ordered"
+              title="Favorite drinks in Vietnam"
+            />
           </div>
           <CoffeeMap />
         </div>

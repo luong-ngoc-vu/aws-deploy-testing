@@ -1,7 +1,14 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import './App.css'
 // import Users from "./components/users";
-import { About, CafeFooter, FeaturedMenu, HeroSection, Navbar } from './features/cafe/components'
+import {
+  About,
+  CafeExperience,
+  CafeFooter,
+  FeaturedMenu,
+  HeroSection,
+  Navbar,
+} from './features/cafe/components'
 // import { useBackendHealth } from "./hooks/useBackendHealth";
 
 const queryClient = new QueryClient()
@@ -83,6 +90,7 @@ function AppContent() {
         <HeroSection />
         <FeaturedMenu />
         <About />
+        <CafeExperience />
         {/* <Users /> */}
       </main>
       <CafeFooter />

@@ -1,4 +1,5 @@
 export { default as About } from './About'
+export { default as CafeExperience } from './CafeExperience'
 export { default as CafeFooter } from './CafeFooter'
 export { default as FeaturedMenu } from './FeaturedMenu'
 export { default as HeroSection } from './HeroSection'
